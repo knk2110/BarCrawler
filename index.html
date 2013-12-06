@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Bar Crawl Application</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+    <body style="padding: 10px 10px 10px 10px;">
+    	<div id="pageTitle">
+			<h1>Your Bar Crawls</h1>
+		</div>
+		
+		<div id="pageContent" class="col-md-8">
+			<P>
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newCrawlModal"><span class="glyphicon glyphicon-plus"></span> Add New Crawl</button>
+			</P>
+		</div>
+	
+		<!-- Modal -->
+		<div class="modal fade" id="newCrawlModal" role="dialog">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Enter Some Details About Your New Crawl</h4>
+					</div>
+					<div class="modal-body">
+						<p>*required</p>
+		
+						<p>	
+							<form role="form" id="newCrawlForm">
+								<fieldset class="form-inline">
+									<div class="form-group">
+										<label for="newCrawlFormTitle">Crawl Name</label>
+										<input type="text" class="form-control" id="newCrawlFormTitle" size="5" placeholder="Enter a name" autofocus>
+									</div>
+									<div class="form-group">
+										<label for="newCrawlFormDate">Date</label>
+										<input type="date" class="form-control" id="newCrawlFormDate">
+									</div>
+									<div class="form-group">
+										<label for="newCrawlFormZip">Near*</label>
+										<input type="text" required class="form-control" id="newCrawlFormZip" size="5" maxlength="5" pattern="[0-9]*" placeholder="zip">
+									</div>									
+								</fieldset>
+								<br>
+								<fieldset class="form-inline">
+									<div class="form-group">
+										<label for="newCrawlFormType">Type of Bars</label>
+										<select class="form-control" id="newCrawlFormType">
+											<option value=""></option>
+											<option value="4bf58dd8d48988d116941735">Bar</option>
+											<option value="4bf58dd8d48988d117941735">Beer Garden</option>
+											<option value="50327c8591d4c4b30a586d5d">Brewery</option>
+											<option value="4bf58dd8d48988d11e941735">Cocktail Bar</option>
+											<option value="4bf58dd8d48988d118941735">Dive Bar</option>
+											<option value="4bf58dd8d48988d1d8941735">Gay Bar</option>
+											<option value="4bf58dd8d48988d119941735">Hookah Bar</option>
+											<option value="4bf58dd8d48988d1d5941735">Hotel Bar</option>
+											<option value="4bf58dd8d48988d120941735">Karaoke Bar</option>
+											<option value="4bf58dd8d48988d121941735">Lounge</option>
+											<option value="4bf58dd8d48988d11f941735">Nightclub</option>
+											<option value="4bf58dd8d48988d11b941735">Pub</option>
+											<option value="4bf58dd8d48988d11c941735">Sake Bar</option>
+											<option value="4bf58dd8d48988d1d4941735">Speakeasy</option>
+											<option value="4bf58dd8d48988d11d941735">Sports Bar</option>
+											<option value="4bf58dd8d48988d1d6941735">Strip Club</option>
+											<option value="4bf58dd8d48988d122941735">Whiskey Bar</option>
+											<option value="4bf58dd8d48988d123941735">Wine Bar</option>
+											<option value="4bf58dd8d48988d11a941735">Other</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="newCrawlFormRating">Rating</label>
+										<input type="number" class="form-control" min="0" max="10" width="2" id="newCrawlFormRating" placeholder="0-10">
+									</div>
+									<div class="form-group">
+										<label for="newCrawlFormPrice">Price</label>
+										<select class="form-control" id="newCrawlFormPrice">
+											<option value=""></option>
+											<option value="1">$</option>
+											<option value="2">$$</option>
+											<option value="3">$$$</option>
+											<option value="4">$$$$</option>
+										</select>
+									</div>
+								</fieldset>
+								<br>
+								<fieldset class="form-inline">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+									<input type="submit" class="btn btn-primary" value="Add"></input>
+								</fieldset>
+							</form>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+				
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="js/underscore-min.js"></script>
+    	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+    	<script type="text/javascript" src="js/store.min.js"></script>
+    	<script type="text/javascript" src="js/templates.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+    </body>
+</html>
