@@ -80,11 +80,17 @@ var bars = {
 
 var addItineraryToHomepage = function(itinerary) {
 	itinerary.mapURL = "http://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=roadmap&markers=color:blue%7Clabel:1%7C40.702147,-74.015794&markers=color:blue%7Clabel:2%7C40.711614,-74.012318&markers=color:red%7Ccolor:blue%7Clabel:3%7C40.718217,-73.998284&sensor=false";
+	itinerary.mapURL = buildMapURL({height:300, width:300, zipcode:"10027"});	
 	$('#pageContent').append(homepageCrawlPanel(itinerary));
 	
-	var addBarToItinerary = function(barId, i) {
+	var addBarToItinerary = function(barId, i, barIds) {
 		bars[barId].num = i+1;
 		$('#' + itinerary.id + '-crawl-panel-list').append(homepageCrawlPanelBar(bars[barId]));
+		
+		if (i < barIds.length) {
+			console.log(homepageCrawlPanelWalkTime({minutes: 5}));
+			$('#' + itinerary.id + '-crawl-panel-list').append(homepageCrawlPanelWalkTime({minutes: 5}));	
+		}
 	};
 	
 	_.each(itinerary.barIds, addBarToItinerary); 
