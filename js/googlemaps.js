@@ -61,6 +61,6 @@ function buildMapURL(locator){
     alert('Invalid input!');
   }
   urlString += "&sensor=true";
-  console.log(urlString);
+
   return urlString;
 }
