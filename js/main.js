@@ -221,7 +221,14 @@ var refreshCrawlOnEditPage = function() {
 var addEditPageEventListeners = function() {
 	$('#crawlFormHome').on('click', function(event) { showMainPage(); });
 	
-	$('#barSearchForm').on('submit', function(event) {event.preventDefault(); console.log("PULL DATA FROM FORM, launch search, disable button"); });	
+	// When the barSearchForm is submitted, we must pull the data from the form, call the API, disable the form, show a loading indicator 
+	$('#barSearchForm').on('submit',
+		function(event) {
+			event.preventDefault();
+			
+			console.log($('#barSearchForm').serializeArray());
+		}
+	);	
 };
 
 // Shows the edit page for a given crawl id
