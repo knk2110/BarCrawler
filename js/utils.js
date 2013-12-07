@@ -1,4 +1,8 @@
 // Miscellaneous utility functions
+// Given a string representation of a date d in format from, returns a string representation of d in format to
+var reformatDate = function(d, from, to) {
+	return moment(d, from).format(to);
+};
 
 // Returns string s repeated n number of times
 var rept = function(s, n) {
