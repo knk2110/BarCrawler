@@ -1,5 +1,5 @@
 // Google Maps API
-var geocoder = new google.maps.Geocoder();
+// var geocoder = new google.maps.Geocoder();
 var ZIP_ZOOM = 15;
 var PATH_WEIGHT = 3;
 var PATH_COLOR = "blue";
