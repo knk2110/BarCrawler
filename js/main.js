@@ -76,6 +76,7 @@ var dateFormats = {
 /////////////////// VARIABLES ///////////////////
 var currentCrawl;		// object for the crawl currently being edited on the edit screen
 var currentCrawlId;		// id of the crawl currently being edited on the edit screen
+var lastSortType;		// last type of sort that was performed on the edit page
 var isCrawlSaved;		// Boolean whether crawl edits are saved.  true means they are no unsaved changes, false means there are unsaved changes
 var searchResults;		// current search results, which is an array of bar ids
 
@@ -295,6 +296,8 @@ var refreshSearchResultsOnEditPage = function() {
 	// Add each bar in the search results to the panel or show a message indicating there are no results
 	if (searchResults.length > 0) {
 		$('#searchResults').append(editPageSearchSort({num: currentCrawl.barIds.length}));
+		$('#barSearchFormSort').change(function() { console.log("Sort results by " + $('#barSearchFormSort').val()); });
+		
 		_.each(searchResults,
 			function(barId) {
 				var bar = getDetails(barId);
@@ -384,6 +387,9 @@ var addEditPageEventListeners = function() {
 					// Remove from the search results any bars that are already in the crawl
 					searchResults = _.difference(searchResults, currentCrawl.barIds);
 					
+					// Sort the searchResults
+					searchResults = sortIDs(searchResults, {distance: currentCrawl.barIds[currentCrawl.barIds.length-1]});
+					
 					// Refresh the search results
 					refreshSearchResultsOnEditPage();
 				}
@@ -396,7 +402,7 @@ var addEditPageEventListeners = function() {
 			// Clear any existing results or message and show a loading indicator instead
 			$('#searchResults').html('<img src="img/loading.gif">');
 		}
-	);	
+	);
 };
 
 // Shows the edit page for a given crawl id
@@ -404,6 +410,7 @@ var showEditPage = function(id) {
 	currentCrawl = getDetails(id);
 	currentCrawlId = id;
 	searchResults = [];
+	lastSortType = 'distance';
 	
 	$('#body').html('');						// Clear the page of all content
 	$('#body').append(editPageStructure());		// Add the basic structure of the main page

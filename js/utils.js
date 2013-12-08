@@ -62,7 +62,7 @@ function sortIDs(IDs, searchBy){
 	if(searchBy.price){
 		console.log('in here');
 		if(searchBy.price < 0){
-			detailedData.sort(function(a,b) { return a.price + b.price});
+			detailedData.sort(function(a,b) { return b.price - a.price });
 		}
 		else{
 			detailedData.sort(function(a,b) { return a.price - b.price});
@@ -70,16 +70,20 @@ function sortIDs(IDs, searchBy){
 	}
 	else if(searchBy.rating){
 		if(searchBy.rating < 0){
-			detailedData.sort(function(a,b) { return a.rating + b.rating});
+			detailedData.sort(function(a,b) { return b.rating - a.rating});
 		}
 		else{
 			detailedData.sort(function(a,b) { return a.rating - b.rating});
 		}
 	}
-	else if(searchBy, distance){
-		var startingPoint = searchBy.distance;
-		var distanceArray = getWalkingDistances(IDs , startingPoint);
-		distanceArray.sort(function(a,b) { return a.distance - b.distance});
+	else if(searchBy.distance){
+		//console.log(":::::::::::::::::::", searchBy.distance);
+		console.log(IDs);
+		IDs.sort(function(a,b) { return walkingTime(getDetails(a), getDetails(searchBy.distance)) - walkingTime(getDetails(b), getDetails(searchBy.distance)); });
+		return IDs;
+		//var startingPoint = searchBy.distance;
+		//var distanceArray = getWalkingDistances(IDs, startingPoint);
+		//distanceArray.sort(function(a,b) { return a.distance - b.distance});
 	}
 	else{
 		alert("wrong search criteria!");
