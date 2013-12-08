@@ -264,10 +264,16 @@ function parse_venue_object(venues)
     if(typeof venue_price != "undefined")
     {
       venue_price = venues[i]['price']['tier'];
-    } else {
+
+    } 
+    else {
     	venue_price = "";	
     }
     var venue_rating = venues[i]['rating'];
+    if(typeof venue_rating =="undefined")
+    {
+      venue_rating = "";
+    }
     venue_url = venues[i]['url'];
 
     //some vendors don't have a specifed category and some have more than one category
@@ -288,7 +294,7 @@ function parse_venue_object(venues)
       }
       if(typeof venue_categoryName == "undefined")
       {
-        venue_categoryName = "Unknown";
+        venue_categoryName = "Nightlife Spot";
       }
     
     var venue_location = venues[i]['location'];
