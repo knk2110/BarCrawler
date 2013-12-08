@@ -226,7 +226,15 @@ var addEditPageEventListeners = function() {
 		function(event) {
 			event.preventDefault();
 			
-			console.log($('#barSearchForm').serializeArray());
+			// Read the data from the form and format it into an object to pass to search_venue
+			var formData = $('#barSearchForm').serializeArray();
+			var params = {};
+			_.each(formData, function(obj) { params[obj.name] = obj.value; });
+			
+			search_venue(params, function(results) { console.dir(results); $('#barSearchForm>fieldset').attr('disabled', false); });
+			
+			// Disable the form while the search is running
+			$('#barSearchForm>fieldset').attr('disabled', true);		
 		}
 	);	
 };

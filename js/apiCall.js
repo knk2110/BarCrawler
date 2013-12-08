@@ -63,6 +63,7 @@ function search_venue(inputs,callback){
   var zip = inputs.zip;
   var barName = inputs.barName; 
   var place;
+
   if(zip!="" && barName!="")
   {
     place = barName+"&near="+zip;
