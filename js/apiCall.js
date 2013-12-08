@@ -63,7 +63,11 @@ function search_venue(inputs,callback){
   var zip = inputs.zip;
   var barName = inputs.barName; 
   var place;
-  if(typeof barName!="undefined")
+  if(zip!="" && barName!="")
+  {
+    place = barName+"&near="+zip;
+  }
+  else if(zip=="" && barName!="")
   {
     place = barName;
   }
@@ -80,9 +84,11 @@ function search_venue(inputs,callback){
   var venues=[];
   var url;
 
+  console.log(place);
 //when searching the venues, search only the ones within radius of 1000 meters
   if(typeof categoryId !="undefined")
   {
+
      url = config.apiUrl + 'v2/venues/search?near='+place+'&categoryId='+categoryId+'&radius=1000&'+auth+'&v='+getDateString();
   }
   else
@@ -90,10 +96,7 @@ function search_venue(inputs,callback){
      url = config.apiUrl + 'v2/venues/search?near='+place+'&radius=1000&'+auth+'&v='+getDateString();
   }
  
-  /*First get the date returned from search api, and then for each search result, do searched using venue_id
-  to get detail information. After that, filter through all the results based on the rating and price and
-  finally filter the properties of each venue.
-  */
+  console.log(url);
   $.getJSON(url,
     function(data) {
       venues = data['response']['venues'];
@@ -117,7 +120,7 @@ function search_venue(inputs,callback){
           {
              filtered_list = parse_venue_object(venue_details);
           }
-          console.log(filtered_list);
+          callback(filtered_list);
       });
     })
     .done(function() {
@@ -125,6 +128,8 @@ function search_venue(inputs,callback){
   })
   .fail(function() {
     console.log( "error" );
+    empty =[];
+    callback(empty);
   });
 }
 
