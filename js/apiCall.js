@@ -213,6 +213,8 @@ function parse_venue_object(venues)
     if(typeof venue_price != "undefined")
     {
       venue_price = venues[i]['price']['tier'];
+    } else {
+    	venue_price = "";	
     }
     var venue_rating = venues[i]['rating'];
     venue_url = venues[i]['url'];
