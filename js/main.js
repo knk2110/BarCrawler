@@ -381,6 +381,9 @@ var addEditPageEventListeners = function() {
 					searchResults = [];
 					_.each(results, function(bar, i) { searchResults[i] = bar.id; saveData(bar, "bar", bar.id); } );
 					
+					// Remove from the search results any bars that are already in the crawl
+					searchResults = _.difference(searchResults, currentCrawl.barIds);
+					
 					// Refresh the search results
 					refreshSearchResultsOnEditPage();
 				}

@@ -312,7 +312,7 @@ templates.editPageCrawlPanelBar = [
 	'			</span>',
 	'			<div class="media-body">',
 	'				<strong>{{= name =}}</strong> ({{= category =}}) {{ if (rating != "") { }} <span class="label label-info">{{= rating =}} / 10</span> {{ } }} <span class="label label-success">{{= rept("$",price) =}}</span> {{ if (typeof url != "undefined") { }} <a class="btn btn-xs btn-default" href="{{= url =}}" target="_blank"><span class="glyphicon glyphicon-info-sign"></span></a>{{ } }}',
-	'				<span class="text-muted">{{ if (typeof location.address != "undefined") { }} {{= location.address =}}, {{ } }} {{ if (typeof location.city != "undefined") { }} {{= location.city =}}, {{ } }} {{= location.state =}} {{= location.postalCode =}}</span>',
+	'				<br><span class="text-muted">{{ if (typeof location.address != "undefined") { }} {{= location.address =}}, {{ } }} {{ if (typeof location.city != "undefined") { }} {{= location.city =}}, {{ } }} {{= location.state =}} {{= location.postalCode =}}</span>',
 	'			</div>',
 	'		</div>',
 	'	</div>',
