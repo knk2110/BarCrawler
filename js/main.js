@@ -8,6 +8,7 @@
  * 	title: 'title',
  *  date: '9-Dec-13' or empty string,
  *  updatedDate: '9-Dec-13' or empty string,
+ *  zip: 10010
  * 	barIds: [array of bar ids]
  *  mapURL: url of a map depicting the crawl (updated dynamically)
  * }
@@ -75,8 +76,8 @@ var dateFormats = {
 
 
 /////////////////// VARIABLES ///////////////////
-var currentCrawl;		// id of the crawl currently being edited on the edit screen
-var currentZip;			// zip that was specified when the crawl was created, or of the last bar to be deleted from the crawl
+var currentCrawl;		// object for the crawl currently being edited on the edit screen
+var currentCrawlId;		// id of the crawl currently being edited on the edit screen
 var searchResults;		// current search results, which is an array of bar ids
 
 /////////////////// TEMPLATE COMPILATION ///////////////////
@@ -102,6 +103,8 @@ var addCrawlToMainPage = function(crawlId) {
 		var bar = getDetails(barId);
 		
 		bar.num = i+1;
+		console.log(barId,i+1);
+		console.log(bar);
 		$('#' + crawlId + '-crawl-panel-list').append(mainPageCrawlPanelBar(bar));
 		
 		if (i < barIds.length-1) {
@@ -116,7 +119,8 @@ var addCrawlToMainPage = function(crawlId) {
 	crawl.mapURL = buildMapURL({height:300, width:300, locations:locations});
 	
 	// Set up the panel holding the crawl, including the map.  Then for each bar, insert it
-	crawl.id = crawlId;  
+	crawl.id = crawlId;
+	console.log(crawl);
 	$('#pageContent').append(mainPageCrawlPanel(crawl));
 	_.each(crawl.barIds, insertBar);
 }; 
@@ -144,14 +148,12 @@ var addMainPageEventListeners = function() {
 				title: data.title,
 				date: reformatDate(data.date, dateFormats.form, dateFormats.store),
 				updateDate: reformatDate(data.date, dateFormats.form, dateFormats.store),
+				zip: data.zip,
 				barIds: []
 			};
 			
 			// Save the crawl and obtain an id
 			var id = saveData(crawl, 'crawl');
-			
-			// Take note of the zip code that was specified on the form
-			currentZip = data.zip;
 			
 			// Show the edit page with the shell crawl that was created
 			showEditPage(id);
@@ -197,7 +199,7 @@ var refreshCrawlOnEditPage = function() {
 	// Otherwise, add the bars to the bars panel	
 	if ( currentCrawl.barIds.length == 0 ) {
 		$('#barsList').html("<div class=\"well\">You haven't added any bars to this crawl yet.  Use the search form on the left to find bars you'd like to add.</div>");
-		$('#crawlMap').html(editPageCrawlPanelMap({mapURL: buildMapURL({height:300, width:300, zipcode:currentZip})}));	
+		$('#crawlMap').html(editPageCrawlPanelMap({mapURL: buildMapURL({height:300, width:300, zipcode:currentCrawl.zip})}));	
 	} else {
 		// Clear the area
 		$('#barsList').html('');
@@ -276,6 +278,7 @@ var refreshSearchResultsOnEditPage = function() {
 // Adds event listeners used by buttons on the main page
 var addEditPageEventListeners = function() {
 	$('#crawlFormHome').on('click', function(event) { showMainPage(); });
+	$('#crawlFormSave').on('click', function(event) { saveData(currentCrawl, 'crawl', currentCrawlId); });
 	
 	// When the barSearchForm is submitted, we must pull the data from the form, call the API, disable the form, show a loading indicator 
 	$('#barSearchForm').on('submit',
@@ -310,6 +313,7 @@ var addEditPageEventListeners = function() {
 // Shows the edit page for a given crawl id
 var showEditPage = function(id) {
 	currentCrawl = getDetails(id);
+	currentCrawlId = id;
 	searchResults = [];
 	
 	$('#body').html('');						// Clear the page of all content
@@ -319,7 +323,7 @@ var showEditPage = function(id) {
 	addEditPageEventListeners();				// Add the button handlers
 	
 	if (currentCrawl.barIds.length == 0) {
-		$('#barSearchFormZip').val(currentZip);
+		$('#barSearchFormZip').val(currentCrawl.zip);
 		$('#barSearchForm').submit();
 	}
 	
@@ -327,4 +331,3 @@ var showEditPage = function(id) {
 
 /////////////////// APPLICATION START ///////////////////
 showMainPage();
-
