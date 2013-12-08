@@ -164,7 +164,7 @@ var addMainPageEventListeners = function() {
 	$('.copyCrawl').on('click', function(event) { console.log("COPY " + getId(event.target)); });
 	$('.emailCrawl').on('click', function(event) { console.log("EMAIL " + getId(event.target)); });
 	$('.printCrawl').on('click', function(event) { console.log("PRINT " + getId(event.target)); });
-	$('.deleteCrawl').on('click', function(event) { console.log("DELETE " + getId(event.target)); });	
+	$('.deleteCrawl').on('click', function(event) { deleteData(getId(event.target), 'crawl'); showMainPage(); });	
 };
 
 // Shows the main page
@@ -174,6 +174,8 @@ var showMainPage = function() {
 	
 	// Obtain an array of ids of the crawls that exist
 	var crawlIds = getAllIDs('crawl');
+	console.log("crawls");
+	console.log(crawlIds);
 	
 	// If the crawls do not exist, show an instruction to the user.  Otherwise, add each crawl to the page
 	if (typeof crawlIds === 'undefined') {
@@ -331,3 +333,4 @@ var showEditPage = function(id) {
 
 /////////////////// APPLICATION START ///////////////////
 showMainPage();
+
