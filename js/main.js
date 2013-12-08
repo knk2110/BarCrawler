@@ -201,7 +201,7 @@ var addMainPageEventListeners = function() {
 	);
 	
 	$('.editCrawl').on('click', function(event) { showEditPage(getId(event.target)); });
-	$('.copyCrawl').on('click', function(event) { console.log("COPY " + getId(event.target)); });
+	$('.copyCrawl').on('click', function(event) { var id = copyData(getId(event.target), 'crawl'); var crawl = getDetails(id); crawl.id = id; crawl.title = crawl.title + ' (copy)'; saveData(crawl, 'crawl', id); showMainPage(); });
 	$('.emailCrawl').on('click', function(event) { console.log("EMAIL " + getId(event.target)); });
 	$('.printCrawl').on('click', function(event) { console.log("PRINT " + getId(event.target)); });
 	$('.deleteCrawl').on('click', function(event) { confirmDeleteCrawl({onDelete: function() { deleteData(getId(event.target), 'crawl'); showMainPage(); }}); });	
@@ -296,7 +296,25 @@ var refreshSearchResultsOnEditPage = function() {
 	// Add each bar in the search results to the panel or show a message indicating there are no results
 	if (searchResults.length > 0) {
 		$('#searchResults').append(editPageSearchSort({num: currentCrawl.barIds.length}));
-		$('#barSearchFormSort').change(function() { console.log("Sort results by " + $('#barSearchFormSort').val()); });
+		$('#barSearchFormSort').val(lastSortType);
+		$('#barSearchFormSort').change(function() { lastSortType = $('#barSearchFormSort').val(); refreshSearchResultsOnEditPage(); });
+		
+		// Sort the searchResults
+		var sortParams = {};
+		
+		if (lastSortType == "priceAsc") {
+			sortParams.price = 1;
+		} else if (lastSortType == "priceDesc") {
+			sortParams.price = -1;
+		} else if (lastSortType == "ratingAsc") {
+			sortParams.rating = 1;
+		} else if (lastSortType == "ratingDesc") {
+			sortParams.rating = -1;
+		} else if (lastSortType == "distance") {
+			sortParams.distance = currentCrawl.barIds[currentCrawl.barIds.length-1];
+		}
+		
+		searchResults = sortIDs(searchResults, sortParams);
 		
 		_.each(searchResults,
 			function(barId) {
@@ -332,8 +350,7 @@ var refreshSearchResultsOnEditPage = function() {
 			refreshCrawlOnEditPage();
 			refreshSearchResultsOnEditPage();
 		}
-	);
-	$('.barInfo').on('click', function(event) { console.log("Info ", getId(event.target)); });	
+	);	
 };
 
 // Saves the current crawl
@@ -386,9 +403,6 @@ var addEditPageEventListeners = function() {
 					
 					// Remove from the search results any bars that are already in the crawl
 					searchResults = _.difference(searchResults, currentCrawl.barIds);
-					
-					// Sort the searchResults
-					searchResults = sortIDs(searchResults, {distance: currentCrawl.barIds[currentCrawl.barIds.length-1]});
 					
 					// Refresh the search results
 					refreshSearchResultsOnEditPage();
