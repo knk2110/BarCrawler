@@ -116,7 +116,6 @@ var addCrawlToMainPage = function(crawlId) {
 	
 	// Set up the panel holding the crawl, including the map.  Then for each bar, insert it
 	crawl.id = crawlId;
-	console.log(crawl);
 	$('#pageContent').append(mainPageCrawlPanel(crawl));
 	_.each(crawl.barIds, insertBar);
 }; 
