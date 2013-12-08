@@ -16,7 +16,6 @@ function getAllIDs(type){
 // Returns copy of that object from storage by key
 function getDetails(key){
 	var details = store.get(key);
-	console.log("object here dude!" + details);
 	return JSON.parse(JSON.stringify(details));
 }
 
