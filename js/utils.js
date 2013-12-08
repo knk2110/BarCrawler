@@ -44,3 +44,73 @@ var calcWalkingTime = function(lat1,lon1,lat2,lon2) {
 	
 	return time;
 };
+
+// Parameters : array of IDs to sort, whether to sort by price or rating or by distance
+// for distance, always ID of comparing it to
+// {key, value} , possible key values: price, rating, distance. value: -1 for decreasing, 1 for increasing
+// when desire to compare the distance, will pass in ID of the last bar want distance from
+// return array of sorted IDs
+function sortIDs(IDs, searchBy){
+	// Get details of all IDs inside of the array and store them in another array
+	console.log(IDs);
+	var detailedData = getDetailedArray(IDs);
+	// for(var i=0; i<IDs.length;i++){
+	// 	deleteData(IDs[i], 'bars');
+	// }
+	var sortedArray = new Array();
+	console.log(detailedData);
+	if(searchBy.price){
+		console.log('in here');
+		if(searchBy.price < 0){
+			detailedData.sort(function(a,b) { return a.price + b.price});
+		}
+		else{
+			detailedData.sort(function(a,b) { return a.price - b.price});
+		} 
+	}
+	else if(searchBy.rating){
+		if(searchBy.rating < 0){
+			detailedData.sort(function(a,b) { return a.rating + b.rating});
+		}
+		else{
+			detailedData.sort(function(a,b) { return a.rating - b.rating});
+		}
+	}
+	else if(searchBy, distance){
+		var startingPoint = searchBy.distance;
+		var distanceArray = getWalkingDistances(IDs , startingPoint);
+		distanceArray.sort(function(a,b) { return a.distance - b.distance});
+	}
+	else{
+		alert("wrong search criteria!");
+	}
+	// parse results
+	for(var i=0; i<detailedData.length;i++){
+		sortedArray[i] = detailedData[i].id;
+	}
+	console.log(sortedArray);
+	return sortedArray;
+}
+
+// Returns an array with the detailed data
+function getDetailedArray(IDs){
+	var detailedData = new Array();
+	for(var i=0; i< IDs.length; i++){
+		detailedData[i] = store.get(IDs[i]);
+	}
+	return detailedData;
+}
+
+// Returns array of walking distance form last point and IDs of venues
+function getWalkingDistances(IDs , firstDest){
+	var detailedData = new Array();
+	var lat1 = (store.get(IDs[firstDest])).location.lat;
+	var lng1 = (store.get(IDs[firstDest])).location.lng;
+	for(var i=0; i< IDs.length; i++){
+		var lat2 = (store.get(IDs[i])).location.lat;
+		var lon2 = (store.get(IDs[i])).location.lat;
+		var walkingDistance = calcWalkingTime(lat1,lon1,lat2,lon2);
+		detailedData[i] = {'id': store.get(IDs[i]).id, 'distance': walkingDistance} ;
+	}
+	return detailedData;
+}
