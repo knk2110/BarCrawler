@@ -16,7 +16,12 @@ function getAllIDs(type){
 // Returns copy of that object from storage by key
 function getDetails(key){
 	var details = store.get(key);
-	return JSON.parse(JSON.stringify(details));
+	
+	if (typeof details === 'undefined') {
+		return undefined;
+	} else {
+		return JSON.parse(JSON.stringify(details));
+	}
 }
 
 // Save object by key
