@@ -78,6 +78,7 @@ var currentCrawlId;		// id of the crawl currently being edited on the edit scree
 var isCrawlSaved;		// Boolean whether crawl edits are saved.  true means they are no unsaved changes, false means there are unsaved changes
 var searchResults;		// current search results, which is an array of bar ids
 
+
 /////////////////// TEMPLATE COMPILATION ///////////////////
 var mainPageStructure = _.template(templates.mainPageStructure);
 var mainPageCrawlPanel = _.template(templates.mainPageCrawlPanel);
@@ -89,6 +90,7 @@ var editPageSearchPanelBar = _.template(templates.editPageSearchPanelBar);
 var editPageCrawlPanelBar = _.template(templates.editPageCrawlPanelBar);
 var editPageCrawlPanelWalkTime = _.template(templates.editPageCrawlPanelWalkTime);
 var editPageCrawlPanelMap = _.template(templates.editPageCrawlPanelMap); 
+
 
 /////////////////// ALERTS ///////////////////
 var confirmDeleteCrawl = function(callbacks) {
