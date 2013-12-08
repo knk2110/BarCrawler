@@ -87,19 +87,19 @@ function search_venue(inputs,callback){
 
   var zip = inputs.zip;
   var barName = inputs.barName; 
-  var place;
+  var query="";
 
   if(zip!="" && barName!="")
   {
-    place = barName+"&near="+zip;
+    query = "&query="+barName+"&near="+zip;
   }
   else if(zip=="" && barName!="")
   {
-    place = barName;
+    query = "&query="+barName;
   }
   else
   {
-    place = zip;
+    query = "&near="+zip;
   }
 
   var categoryId = inputs.categoryId;
@@ -113,11 +113,11 @@ function search_venue(inputs,callback){
   if(typeof categoryId !="undefined")
   {
 
-     url = config.apiUrl + 'v2/venues/search?near='+place+'&categoryId='+categoryId+'&radius=1000&'+auth+'&v='+getDateString();
+     url = config.apiUrl + 'v2/venues/search?'+query+'&categoryId='+categoryId+'&radius=1000&'+auth+'&v='+getDateString();
   }
   else
   {
-     url = config.apiUrl + 'v2/venues/search?near='+place+'&radius=1000&'+auth+'&v='+getDateString();
+     url = config.apiUrl + 'v2/venues/search?'+query+'&radius=1000&'+auth+'&v='+getDateString();
   }
  
   console.log(url);
