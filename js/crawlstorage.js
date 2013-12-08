@@ -1,11 +1,15 @@
 // Gets all objects from storage
 // returns copy of array containing all objects
-function getAllIDs(key){
-	// array of bar crawls
-	var data = store.get(key);
-	// cloned object
-	console.log(data);
-	return JSON.parse(JSON.stringify(data));
+function getAllIDs(type){
+	// array of objects of that type
+	var data = store.get(type);
+	
+	if (typeof data === 'undefined') {
+		return undefined;
+	} else {
+		// return clone of the object
+		return JSON.parse(JSON.stringify(data));	
+	}
 }
 
 // Get details of object stored at that key
@@ -21,7 +25,7 @@ function getDetails(key){
 // Returns the key of the stored crawl
 function saveData(data, type, key){
 	if(key){
-		store.set(key, dataß);
+		store.set(key, data);
 		return key;
 	}
 	else{
