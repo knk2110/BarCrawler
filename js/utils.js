@@ -4,6 +4,8 @@
 var reformatDate = function(d, from, to) {
 	if (d == "") { 
 		return "";
+	} else if (d == "today") {
+		return moment().format(to);
 	} else {
 		return moment(d, from).format(to);
 	}

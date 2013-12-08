@@ -1,6 +1,3 @@
-// TO DO
-// UPDATE DATE IS NOT UPDATED
-
 /////////////////// OBJECT MODEL ///////////////////
 /*
  * A crawl object is structured as follows:
@@ -78,6 +75,7 @@ var dateFormats = {
 /////////////////// VARIABLES ///////////////////
 var currentCrawl;		// object for the crawl currently being edited on the edit screen
 var currentCrawlId;		// id of the crawl currently being edited on the edit screen
+var isCrawlSaved;		// Boolean whether crawl edits are saved.  true means they are no unsaved changes, false means there are unsaved changes
 var searchResults;		// current search results, which is an array of bar ids
 
 /////////////////// TEMPLATE COMPILATION ///////////////////
@@ -174,7 +172,7 @@ var showMainPage = function() {
 	var crawlIds = getAllIDs('crawl');
 	
 	// If the crawls do not exist, show an instruction to the user.  Otherwise, add each crawl to the page
-	if (typeof crawlIds === 'undefined') {
+	if (typeof crawlIds === 'undefined' || crawlIds.length == 0) {
 		$('#pageContent').append("<P>You don't have any bar crawls yet.  Type <strong>Add New Crawl</strong> to create one.");
 	} else {
 		_.each(crawlIds, addCrawlToMainPage);				// Add the crawls
@@ -228,9 +226,9 @@ var refreshCrawlOnEditPage = function() {
 		};
 		
 		// Add listeners for the buttons
-		$('.barUp').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), -1); refreshCrawlOnEditPage(); });
-		$('.barDown').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), 1); refreshCrawlOnEditPage(); });
-		$('.barDelete').on('click', function(event) { deleteBarFromCrawl(currentCrawl, getId(event.target)); searchResults.push(getId(event.target)); refreshCrawlOnEditPage(); refreshSearchResultsOnEditPage(); });	
+		$('.barUp').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), -1); refreshCrawlOnEditPage(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
+		$('.barDown').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), 1); refreshCrawlOnEditPage(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
+		$('.barDelete').on('click', function(event) { deleteBarFromCrawl(currentCrawl, getId(event.target)); searchResults.push(getId(event.target)); refreshCrawlOnEditPage(); refreshSearchResultsOnEditPage(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });	
 	}
 };
 
@@ -266,6 +264,8 @@ var refreshSearchResultsOnEditPage = function() {
 			barId = getId(event.target);
 			searchResults = _.without(searchResults, barId );
 			addBarToCrawl(currentCrawl, barId);
+			$('#crawlFormSave').attr("disabled", false);
+			isCrawlSaved = false;
 			refreshCrawlOnEditPage();
 			refreshSearchResultsOnEditPage();
 		}
@@ -275,8 +275,11 @@ var refreshSearchResultsOnEditPage = function() {
 
 // Adds event listeners used by buttons on the main page
 var addEditPageEventListeners = function() {
+	$('#crawlFormTitle').change(function(event) { currentCrawl.title = $('#crawlFormTitle').val(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
+	$('#crawlFormDate').change(function(event) { currentCrawl.date = reformatDate($('#crawlFormDate').val(), dateFormats.form, dateFormats.store); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
 	$('#crawlFormHome').on('click', function(event) { showMainPage(); });
-	$('#crawlFormSave').on('click', function(event) { saveData(currentCrawl, 'crawl', currentCrawlId); });
+	$('#crawlFormSave').on('click', function(event) { currentCrawl.updateDate = reformatDate("today", "", dateFormats.store); saveData(currentCrawl, 'crawl', currentCrawlId); $('#crawlFormSave').attr("disabled", true); isCrawlSaved = false; });
+	$('#crawlFormDelete').on('click', function(event) { deleteData(currentCrawlId, 'crawl'); showMainPage(); });
 	
 	// When the barSearchForm is submitted, we must pull the data from the form, call the API, disable the form, show a loading indicator 
 	$('#barSearchForm').on('submit',
@@ -312,12 +315,14 @@ var addEditPageEventListeners = function() {
 var showEditPage = function(id) {
 	currentCrawl = getDetails(id);
 	currentCrawlId = id;
+	isCrawlSaved = true;
 	searchResults = [];
 	
 	$('#body').html('');						// Clear the page of all content
 	$('#body').append(editPageStructure());		// Add the basic structure of the main page
 	populateEditPageHeader();					// Fill out the form on the top of the edit page
 	refreshCrawlOnEditPage();					// Add the crawls
+	$('#crawlFormSave').attr("disabled", true); // Crawl is currently saved, so save is disbled
 	addEditPageEventListeners();				// Add the button handlers
 	
 	if (currentCrawl.barIds.length == 0) {
