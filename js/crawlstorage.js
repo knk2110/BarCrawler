@@ -71,3 +71,32 @@ function deleteData(key, type){
 	}
 }
 
+/*
+ * Copies the crawl whose id is provided as a parameter and stores it
+ * with a new id. Returns the new id upon successful completion and -1
+ * upon a failure
+*/
+function copyObject(id, type){
+	var data = store.get(id);
+	if (data){
+		var copiedData = JSON.parse(JSON.stringify(data));
+		var time = new Date().getTime();
+		var newID = "id" + time + Math.floor((Math.random()*999999999)+1);
+		store.set(newID, copiedData);
+		
+		//add new ID to list of IDs for that type
+		var existingIDs = store.get(type):
+		if (existingIDs){
+			existingIDs.push(newID);
+			store.set(type, existingIDs);
+			return newID;
+		}
+		else{
+			//if we are copying an existing ID, we should never get here--the list of IDs for that type of object must exist!
+			return -1;
+		}
+	}
+	else{
+		return -1;
+	}
+}
