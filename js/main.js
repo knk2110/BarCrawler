@@ -388,6 +388,9 @@ var addEditPageEventListeners = function() {
 			// Disable the form while the search is running
 			$('#crawlFormSearch').val('Searching...');
 			$('#barSearchForm>fieldset').attr('disabled', true);		
+			
+			// Clear any existing results or message and show a loading indicator instead
+			$('#searchResults').html('<img src="img/loading.gif">');
 		}
 	);	
 };

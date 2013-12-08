@@ -103,6 +103,7 @@ templates.mainPageCrawlPanel = [
 //  category: The category of the bar
 //  rating: A number from 0-10 representing the rating of the bar
 //  price: An integer from 1 to 4 representing the price of the bar
+//  url: The url of a page to link for more information
 //  location: An object representing the location of the bar, with the following structure:
 //    address: street address
 //    city: city
@@ -113,7 +114,7 @@ templates.mainPageCrawlPanelBar = [
 	'		<div class="media">',
 	'			<span class="pull-left"><h4><span class="label label-warning">{{= num =}}</span></h4></span>',
 	'			<div class="media-body">',
-	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}} / 10</span> <span class="label label-success">{{= rept("$",price) =}}</span>',
+	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}} / 10</span> <span class="label label-success">{{ rept("$",price) }}</span> {{ if (typeof url != "undefined") { }} <a class="btn btn-xs btn-default" href="{{= url =}}" target="_blank"><span class="glyphicon glyphicon-info-sign"></span></a>{{ } }}</span>',
 	'				<br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
 	'			</div>',
 	'		</div>',
@@ -261,6 +262,7 @@ templates.editPageSearchSort = [
 //  category: The category of the bar
 //  rating: A number from 0-10 representing the rating of the bar
 //  price: An integer from 1 to 4 representing the price of the bar
+//  url: The url of a page to link to with more information
 //  location: An object representing the location of the bar, with the following structure:
 //    address: street address
 //    city: city
@@ -274,11 +276,10 @@ templates.editPageSearchPanelBar = [
 	'		<div class="media">',
 	'			<span class="pull-right">',
 	'				<button type="button" class="btn btn-xs btn-primary barAdd" name="{{= id =}}"><span class="glyphicon glyphicon-plus"></span> Add</button>',
-	'				<button type="button" class="btn btn-xs btn-default barInfo" name="{{= id =}}"><span class="glyphicon glyphicon-info-sign"></span> Info</button>',
 	'			</span>',
 	'			<div class="media-body">',
-	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}} / 10</span> <span class="label label-success">{{= rept("$",price) =}}</span> <span class="text-muted">',
-	'				<br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
+	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}} / 10</span> <span class="label label-success">{{ rept("$",price) }}</span> {{ if (typeof url != "undefined") { }} <a class="btn btn-xs btn-default" href="{{= url =}}" target="_blank"><span class="glyphicon glyphicon-info-sign"></span></a>{{ } }}',
+	'				<span class="text-muted"><br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
 	'				{{ if (typeof distanceInfo !== "undefined") { }} <br> {{= distanceInfo.minutes =}} min walk from <span class="label label-warning">{{= distanceInfo.num =}} </span> {{ } }} </span>', 	
 	'			</div>',
 	'		</div>',
@@ -293,6 +294,7 @@ templates.editPageSearchPanelBar = [
 //  category: The category of the bar
 //  rating: A number from 0-10 representing the rating of the bar
 //  price: An integer from 1 to 4 representing the price of the bar
+//  url: The url of a page to link to with more information
 //  location: An object representing the location of the bar, with the following structure:
 //    address: street address
 //    city: city
@@ -310,8 +312,8 @@ templates.editPageCrawlPanelBar = [
 	'				<button type="button" class="btn btn-xs btn-danger barDelete" name="{{= id =}}"><span class="glyphicon glyphicon-trash"></span></button>',
 	'			</span>',
 	'			<div class="media-body">',
-	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}} / 10</span> <span class="label label-success">{{= rept("$",price) =}}</span> <span class="text-muted">',
-	'				<br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
+	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}} / 10</span> <span class="label label-success">{{ rept("$",price) }}</span> {{ if (typeof url != "undefined") { }} <a class="btn btn-xs btn-default" href="{{= url =}}" target="_blank"><span class="glyphicon glyphicon-info-sign"></span></a>{{ } }}',
+	'				<span class="text-muted"><br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
 	'			</div>',
 	'		</div>',
 	'	</div>',
