@@ -294,7 +294,7 @@ var refreshSearchResultsOnEditPage = function() {
 	
 	// Add each bar in the search results to the panel or show a message indicating there are no results
 	if (searchResults.length > 0) {
-		$('#searchResults').append(editPageSearchSort());
+		$('#searchResults').append(editPageSearchSort({num: currentCrawl.barIds.length}));
 		_.each(searchResults,
 			function(barId) {
 				var bar = getDetails(barId);
@@ -306,7 +306,7 @@ var refreshSearchResultsOnEditPage = function() {
 						num: currentCrawl.barIds.length
 					};
 				}
-				console.log(">>" + bar.location.address + "<<");
+				
 				$('#searchResults').append(editPageSearchPanelBar(bar));
 			}
 		);
@@ -343,6 +343,7 @@ var saveCurrentCrawl = function() {
 
 // Adds event listeners used by buttons on the main page
 var addEditPageEventListeners = function() {
+	$('#crawlForm').submit(function(event) { event.preventDefault(); });
 	$('#crawlFormTitle').change(function(event) { currentCrawl.title = $('#crawlFormTitle').val(); updateSaveStatus(false); });
 	$('#crawlFormDate').change(function(event) { currentCrawl.date = reformatDate($('#crawlFormDate').val(), dateFormats.form, dateFormats.store); updateSaveStatus(false); });
 	$('#crawlFormHome').on('click',
