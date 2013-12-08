@@ -77,7 +77,7 @@ function deleteData(key, type){
  * upon a failure
 */
 function copyObject(id, type){
-	var data = store.get(data);
+	var data = store.get(id);
 	if (data){
 		var copiedData = JSON.parse(JSON.stringify(data));
 		var time = new Date().getTime();
