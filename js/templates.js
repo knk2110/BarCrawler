@@ -1,8 +1,9 @@
 // ALL TEMPLATES USED IN THE APPLICATION
 
-// Set the template settings to be {{ }} style
+// Set the template settings to be {{= =}} style
 _.templateSettings = {
-  interpolate : /\{\{(.+?)\}\}/g
+  evaluate: /\{\{(.+?)\}\}/g,
+  interpolate: /\{\{=(.+?)=\}\}/g
 };
 
 // Object to hold all of the templates
@@ -15,6 +16,7 @@ templates.mainPageStructure = [
 	'		<h1>Your Bar Crawls</h1>',
 	'	</div>',
 	'	<div id="pageContent" class="col-md-8">',
+	'		<P></P>',
 	'		<P>',
 	'			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newCrawlModal"><span class="glyphicon glyphicon-plus"></span> Add New Crawl</button>',
 	'		</P>',
@@ -41,7 +43,7 @@ templates.mainPageStructure = [
 	'								</div>',
 	'								<div class="form-group">',
 	'									<label for="newCrawlFormZip">Near*</label>',
-	'									<input type="text" required class="form-control" id="newCrawlFormZip" name="postalCode" size="5" maxlength="5" pattern="[0-9]*" placeholder="zip">',
+	'									<input type="text" required class="form-control" id="newCrawlFormZip" name="zip" size="5" maxlength="5" pattern="[0-9]*" placeholder="zip">',
 	'								</div>',
 	'							</fieldset>',
 	'							<br>',
@@ -49,7 +51,7 @@ templates.mainPageStructure = [
 	'								<div class="form-group">',
 	'									<label for="newCrawlFormType">Type of Bar</label>',
 	'									<select class="form-control" id="newCrawlFormType" name="category">',
-	'										<option value=""></option>',
+	'										<option value="4d4b7105d754a06376d81259"></option>',
 	'										<option value="4bf58dd8d48988d116941735">Bar</option>',
 	'										<option value="4bf58dd8d48988d117941735">Beer Garden</option>',
 	'										<option value="50327c8591d4c4b30a586d5d">Brewery</option>',
@@ -89,7 +91,7 @@ templates.mainPageStructure = [
 	'							<br>',
 	'							<fieldset class="form-inline">',
 	'								<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>',
-	'								<input type="submit" class="btn btn-primary" id="addCrawl" value="Add">',
+	'								<input type="submit" class="btn btn-primary" value="Add">',
 	'							</fieldset>',
 	'						</form>',
 	'					</p>',
@@ -107,27 +109,27 @@ templates.mainPageStructure = [
 //  updateDate: date that the crawl was last updated in the desired format
 //  mapURL: a URL for a Google static map depicting the crawl 
 templates.mainPageCrawlPanel = [
-	'<div class="panel panel-default" id="#{{ id }}-crawl-panel">',
+	'<div class="panel panel-default" id="#{{= id =}}-crawl-panel">',
 	'	<div class="panel-heading">',
-	'		<button type="button" class="btn btn-xs btn-default" data-toggle="collapse" data-target="#{{ id }}-crawl-panel-content"><span class="glyphicon glyphicon-search"></span></button>',
-	'		<strong>{{ title }}</strong>, {{ date }} <span class="text-muted">(last updated on {{ updateDate }})</span>',
+	'		<button type="button" class="btn btn-xs btn-default" data-toggle="collapse" data-target="#{{= id =}}-crawl-panel-content"><span class="glyphicon glyphicon-search"></span></button>',
+	'		<strong>{{= title =}}</strong>, {{= date =}} <span class="text-muted">(last updated on {{= updateDate =}})</span>',
 	'		<div class="pull-right">',
-	'			<button type="button" class="btn btn-xs btn-primary editCrawl" name="{{ id }}"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
-	'			<button type="button" class="btn btn-xs btn-default copyCrawl" name="{{ id }}"><span class="glyphicon glyphicon-repeat"></span> Copy</button>',
-  	'			<button type="button" class="btn btn-xs btn-default emailCrawl" name="{{ id }}"><span class="glyphicon glyphicon-envelope"></span> Email</button>',
-	'			<button type="button" class="btn btn-xs btn-default printCrawl" name="{{ id }}"><span class="glyphicon glyphicon-print"></span> Print</button>',
-	'			<button type="button" class="btn btn-xs btn-danger deleteCrawl" name="{{ id }}"><span class="glyphicon glyphicon-trash"></span> Delete</button>',
+	'			<button type="button" class="btn btn-xs btn-primary editCrawl" name="{{= id =}}"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
+	'			<button type="button" class="btn btn-xs btn-default copyCrawl" name="{{= id =}}"><span class="glyphicon glyphicon-repeat"></span> Copy</button>',
+  	'			<button type="button" class="btn btn-xs btn-default emailCrawl" name="{{= id =}}"><span class="glyphicon glyphicon-envelope"></span> Email</button>',
+	'			<button type="button" class="btn btn-xs btn-default printCrawl" name="{{= id =}}"><span class="glyphicon glyphicon-print"></span> Print</button>',
+	'			<button type="button" class="btn btn-xs btn-danger deleteCrawl" name="{{= id =}}"><span class="glyphicon glyphicon-trash"></span> Delete</button>',
 	'		</div>',
 	'		<div class="clearfix">',
 	'		</div>',
 	'	</div>',
-	'	<div id="{{ id }}-crawl-panel-content" class="panel-collapse collapse">',
+	'	<div id="{{= id =}}-crawl-panel-content" class="panel-collapse collapse">',
 	'		<div class="panel-body">',
 	'			<div class="row">',
-	'				<div id="{{ id }}-crawl-panel-list" class="col-md-6" style="height:350px; overflow-y:auto;">',
+	'				<div id="{{= id =}}-crawl-panel-list" class="col-md-6" style="height:350px; overflow-y:auto;">',
 	'				</div>',	
 	'				<div class="col-md-6">',
-	'					<div align="center"><img src="{{ mapURL }}"></div>',
+	'					<div align="center"><img src="{{= mapURL =}}"></div>',
 	'				</div>',
 	'			</div>',
 	'		</div>',
@@ -151,10 +153,10 @@ templates.mainPageCrawlPanel = [
 templates.mainPageCrawlPanelBar = [
 	'	<div class="well well-sm">',
 	'		<div class="media">',
-	'			<span class="pull-left"><h4><span class="label label-warning">{{ num }}</span></h4></span>',
+	'			<span class="pull-left"><h4><span class="label label-warning">{{= num =}}</span></h4></span>',
 	'			<div class="media-body">',
-	'				<strong>{{ name }}</strong> ({{ category }}) <span class="label label-info">{{ rating }}</span> <span class="label label-success">{{ rept("$",price) }}</span>',
-	'				<br><span class="text-muted">{{ location.address }}, {{ location.city }}, {{ location.state }} {{ location.postalCode }}</span>',
+	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}}</span> <span class="label label-success">{{= rept("$",price) =}}</span>',
+	'				<br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
 	'			</div>',
 	'		</div>',
 	'	</div>',
@@ -164,7 +166,7 @@ templates.mainPageCrawlPanelBar = [
 // Object passed to the template must be structured as follows:
 //  minutes: The number of the minutes of the walk 
 templates.mainPageCrawlPanelWalkTime = [
-	'<span class="text-muted">&nbsp; &nbsp; {{ minutes }} min walk to...</span><br><br>'
+	'<span class="text-muted">&nbsp; &nbsp; {{= minutes =}} min walk to...</span><br><br>'
 ].join("\n");
 
 // HTML for the structure of the edit page 
@@ -203,7 +205,7 @@ templates.editPageStructure = [
 	'								<div class="form-group">',
 	'									<label for="barSearchFormType">Type of Bars</label>',
 	'									<select class="form-control" id="barSearchFormType" name="categoryId">',
-	'										<option value=""></option>',
+	'										<option value="4d4b7105d754a06376d81259"></option>',
 	'										<option value="4bf58dd8d48988d116941735">Bar</option>',
 	'										<option value="4bf58dd8d48988d117941735">Beer Garden</option>',
 	'										<option value="50327c8591d4c4b30a586d5d">Brewery</option>',
@@ -302,18 +304,20 @@ templates.editPageStructure = [
 //    city: city
 //    state: state
 //    postalCode: postal code
-//  distanceInfo: An object representing the distance from the 
+//  distanceInfo: An object representing the distance from the last bar on the crawl, with the following structure:
+//    minutes: the number of minutes walk
+//    num: the number of the bar that the walk is from 
 templates.editPageSearchPanelBar = [
 	'	<div class="well well-sm">',
 	'		<div class="media">',
 	'			<span class="pull-right">',
-	'				<button type="button" class="btn btn-xs btn-primary" name="id"><span class="glyphicon glyphicon-plus"></span> Add</button>',
-	'				<button type="button" class="btn btn-xs btn-default" name="id"><span class="glyphicon glyphicon-info-sign"></span> Info</button>',
+	'				<button type="button" class="btn btn-xs btn-primary barAdd" name="{{= id =}}"><span class="glyphicon glyphicon-plus"></span> Add</button>',
+	'				<button type="button" class="btn btn-xs btn-default barInfo" name="{{= id =}}"><span class="glyphicon glyphicon-info-sign"></span> Info</button>',
 	'			</span>',
 	'			<div class="media-body">',
-	'				<strong>{{ name }}</strong> ({{ category }}) <span class="label label-info">{{ rating }}</span> <span class="label label-success">{{ rept("$",price) }}</span> <span class="text-muted">',
-	'				<br><span class="text-muted">{{ location.address }}, {{ location.city }}, {{ location.state }} {{ location.postalCode }}</span>',
-	//'				{{ if (distanceInfo !== null) { }} <br> {{ distanceInfo.minutes }} min walk from <span class="label label-warning">{{ distanceInfo.num }} </span> {{ } }} </span>', 
+	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}}</span> <span class="label label-success">{{= rept("$",price) =}}</span> <span class="text-muted">',
+	'				<br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
+	'				{{ if (typeof distanceInfo !== "undefined") { }} <br> {{= distanceInfo.minutes =}} min walk from <span class="label label-warning">{{= distanceInfo.num =}} </span> {{ } }} </span>', 	
 	'			</div>',
 	'		</div>',
 	'	</div>',
@@ -336,16 +340,16 @@ templates.editPageCrawlPanelBar = [
 	'	<div class="well well-sm">',
 	'		<div class="media">',
 	'			<span class="pull-left">',
-	'				<h4><span class="label label-warning">{{ num }}</span></h4>',
+	'				<h4><span class="label label-warning">{{= num =}}</span></h4>',
 	'			</span>',
 	'			<span class="pull-right">',
-	'				<button type="button" class="btn btn-xs btn-default barUp" name="{{ id }}"><span class="glyphicon glyphicon-arrow-up"></span></button>',
-	'				<button type="button" class="btn btn-xs btn-default barDown" name="{{ id }}"><span class="glyphicon glyphicon-arrow-down"></span></button>',
-	'				<button type="button" class="btn btn-xs btn-danger barDelete" name="{{ id }}"><span class="glyphicon glyphicon-trash"></span></button>',
+	'				<button type="button" class="btn btn-xs btn-default barUp" name="{{= id =}}"><span class="glyphicon glyphicon-arrow-up"></span></button>',
+	'				<button type="button" class="btn btn-xs btn-default barDown" name="{{= id =}}"><span class="glyphicon glyphicon-arrow-down"></span></button>',
+	'				<button type="button" class="btn btn-xs btn-danger barDelete" name="{{= id =}}"><span class="glyphicon glyphicon-trash"></span></button>',
 	'			</span>',
 	'			<div class="media-body">',
-	'				<strong>{{ name }}</strong> ({{ category }}) <span class="label label-info">{{ rating }}</span> <span class="label label-success">{{ rept("$",price) }}</span> <span class="text-muted">',
-	'				<br><span class="text-muted">{{ location.address }}, {{ location.city }}, {{ location.state }} {{ location.postalCode }}</span>',
+	'				<strong>{{= name =}}</strong> ({{= category =}}) <span class="label label-info">{{= rating =}}</span> <span class="label label-success">{{= rept("$",price) =}}</span> <span class="text-muted">',
+	'				<br><span class="text-muted">{{= location.address =}}, {{= location.city =}}, {{= location.state =}} {{= location.postalCode =}}</span>',
 	'			</div>',
 	'		</div>',
 	'	</div>',
@@ -355,12 +359,12 @@ templates.editPageCrawlPanelBar = [
 // Object passed to the template must be structured as follows:
 //  minutes: The number of the minutes of the walk 
 templates.editPageCrawlPanelWalkTime = [
-	'<span class="text-muted">&nbsp; &nbsp; {{ minutes }} min walk to...</span><br><br>'
+	'<span class="text-muted">&nbsp; &nbsp; {{= minutes =}} min walk to...</span><br><br>'
 ].join("\n");
 
 // Creates the link to a map depicting the crawl
 // Object passed to the template must be structured as follows:
 //  mapURL: a URL for the map 
 templates.editPageCrawlPanelMap = [
-	'<div align="center"><img src="{{ mapURL }}"></div>'
+	'<div align="center"><img src="{{= mapURL =}}"></div>'
 ].join("\n");
