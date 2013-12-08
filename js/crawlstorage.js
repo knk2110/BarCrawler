@@ -36,7 +36,7 @@ function saveData(data, type, key){
 		// create id for bar crawl
 		var time = new Date().getTime();
 		// create md5 of string
-		var keyString = time + Math.random();
+		var keyString = time + Math.floor((Math.random()*999999999)+1);
 		store.set(keyString, data);
 		// Add key to key array
 		var keyArray = store.get(type);
