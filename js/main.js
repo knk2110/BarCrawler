@@ -306,7 +306,7 @@ var refreshSearchResultsOnEditPage = function() {
 						num: currentCrawl.barIds.length
 					};
 				}
-				
+				console.log(">>" + bar.location.address + "<<");
 				$('#searchResults').append(editPageSearchPanelBar(bar));
 			}
 		);
