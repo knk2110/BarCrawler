@@ -85,7 +85,7 @@ function copyObject(id, type){
 		store.set(newID, copiedData);
 		
 		//add new ID to list of IDs for that type
-		var existingIDs = store.get(type):
+		var existingIDs = store.get(type);
 		if (existingIDs){
 			existingIDs.push(newID);
 			store.set(type, existingIDs);
