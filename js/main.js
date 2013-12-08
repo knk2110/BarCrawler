@@ -17,6 +17,7 @@
  *  category: 'Sports Bar',
  *  rating: 9.2 or empty string,
  * 	price: 2 or empty string,
+ *  url: url to the bar's website, if available
  *  location: {
  * 		address: '101 Road St.',
  * 		city:'New York',
@@ -86,6 +87,7 @@ var mainPageCrawlPanelBar = _.template(templates.mainPageCrawlPanelBar);
 var mainPageCrawlPanelWalkTime = _.template(templates.mainPageCrawlPanelWalkTime);
 
 var editPageStructure = _.template(templates.editPageStructure);
+var editPageSearchSort = _.template(templates.editPageSearchSort);
 var editPageSearchPanelBar = _.template(templates.editPageSearchPanelBar);
 var editPageCrawlPanelBar = _.template(templates.editPageCrawlPanelBar);
 var editPageCrawlPanelWalkTime = _.template(templates.editPageCrawlPanelWalkTime);
@@ -230,6 +232,19 @@ var populateEditPageHeader = function() {
 	$('#crawlFormDate').val(reformatDate(currentCrawl.date, dateFormats.store, dateFormats.form));
 };
 
+// Updates the boolean tracking whether the crawl is saved and the appearance of the save button depending on whether the current crawl is saved or not 
+var updateSaveStatus = function(status) {
+	isCrawlSaved = status;
+	
+	if (isCrawlSaved) {
+		$('#crawlFormSave').html('<span class="glyphicon glyphicon-floppy-disk"></span> Saved');
+		$('#crawlFormSave').attr('disabled', true);	
+	} else {
+		$('#crawlFormSave').html('<span class="glyphicon glyphicon-floppy-disk"></span> Save');
+		$('#crawlFormSave').attr('disabled', false);
+	};	
+};
+
 // Displays the current crawl on the right side of the edit page
 var refreshCrawlOnEditPage = function() {
 	// If the current crawl does not have any bars, show an instruction message and add a map with the current zip code
@@ -267,9 +282,9 @@ var refreshCrawlOnEditPage = function() {
 		};
 		
 		// Add listeners for the buttons
-		$('.barUp').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), -1); refreshCrawlOnEditPage(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
-		$('.barDown').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), 1); refreshCrawlOnEditPage(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
-		$('.barDelete').on('click', function(event) { deleteBarFromCrawl(currentCrawl, getId(event.target)); searchResults.push(getId(event.target)); refreshCrawlOnEditPage(); refreshSearchResultsOnEditPage(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });	
+		$('.barUp').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), -1); refreshCrawlOnEditPage(); updateSaveStatus(false); });
+		$('.barDown').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), 1); refreshCrawlOnEditPage(); updateSaveStatus(false); });
+		$('.barDelete').on('click', function(event) { deleteBarFromCrawl(currentCrawl, getId(event.target)); searchResults.push(getId(event.target)); refreshCrawlOnEditPage(); refreshSearchResultsOnEditPage(); updateSaveStatus(false); });	
 	}
 };
 
@@ -277,22 +292,27 @@ var refreshSearchResultsOnEditPage = function() {
 	// Clear the area
 	$('#searchResults').html('');
 	
-	// Add each bar in the search results to the panel
-	_.each(searchResults,
-		function(barId) {
-			var bar = getDetails(barId);
-			
-			// If there is already a bar on the crawl, include distance information to be shown in the search panel
-			if (currentCrawl.barIds.length > 0) {
-				bar.distanceInfo = {
-					minutes: walkingTime(bar, getDetails(currentCrawl.barIds[currentCrawl.barIds.length-1])),
-					num: currentCrawl.barIds.length
-				};
+	// Add each bar in the search results to the panel or show a message indicating there are no results
+	if (searchResults.length > 0) {
+		$('#searchResults').append(editPageSearchSort());
+		_.each(searchResults,
+			function(barId) {
+				var bar = getDetails(barId);
+				
+				// If there is already a bar on the crawl, include distance information to be shown in the search panel
+				if (currentCrawl.barIds.length > 0) {
+					bar.distanceInfo = {
+						minutes: walkingTime(bar, getDetails(currentCrawl.barIds[currentCrawl.barIds.length-1])),
+						num: currentCrawl.barIds.length
+					};
+				}
+				
+				$('#searchResults').append(editPageSearchPanelBar(bar));
 			}
-			
-			$('#searchResults').append(editPageSearchPanelBar(bar));
-		}
-	);
+		);
+	} else {
+		$('#searchResults').append('<P>No bars matched your search.  Please try another search.</P>');
+	};
 	
 	// We have a listener for each class of buttons on the search results for each bar
 	// If the button is pressed, event.target.name contains the bar id.  However, if the icon is pressed, we need to go to the parent, the button, to get the name
@@ -305,8 +325,7 @@ var refreshSearchResultsOnEditPage = function() {
 			barId = getId(event.target);
 			searchResults = _.without(searchResults, barId );
 			addBarToCrawl(currentCrawl, barId);
-			$('#crawlFormSave').attr("disabled", false);
-			isCrawlSaved = false;
+			updateSaveStatus(false);
 			refreshCrawlOnEditPage();
 			refreshSearchResultsOnEditPage();
 		}
@@ -317,16 +336,15 @@ var refreshSearchResultsOnEditPage = function() {
 // Saves the current crawl
 var saveCurrentCrawl = function() {
 	currentCrawl.updateDate = reformatDate("today", "", dateFormats.store);
-	saveData(currentCrawl, 'crawl', currentCrawlId);
-	$('#crawlFormSave').attr("disabled", true);
-	isCrawlSaved = true;	
+	saveData(currentCrawl, 'crawl', currentCrawlId);	
+	updateSaveStatus(true);
 };
 
 
 // Adds event listeners used by buttons on the main page
 var addEditPageEventListeners = function() {
-	$('#crawlFormTitle').change(function(event) { currentCrawl.title = $('#crawlFormTitle').val(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
-	$('#crawlFormDate').change(function(event) { currentCrawl.date = reformatDate($('#crawlFormDate').val(), dateFormats.form, dateFormats.store); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
+	$('#crawlFormTitle').change(function(event) { currentCrawl.title = $('#crawlFormTitle').val(); updateSaveStatus(false); });
+	$('#crawlFormDate').change(function(event) { currentCrawl.date = reformatDate($('#crawlFormDate').val(), dateFormats.form, dateFormats.store); updateSaveStatus(false); });
 	$('#crawlFormHome').on('click',
 		function(event) {
 			if (isCrawlSaved) {
@@ -355,6 +373,7 @@ var addEditPageEventListeners = function() {
 			search_venue(params,
 				function(results) { 
 					// Re-enable the form
+					$('#crawlFormSearch').val('Search');
 					$('#barSearchForm>fieldset').attr('disabled', false);
 					
 					// Store the search results
@@ -367,7 +386,11 @@ var addEditPageEventListeners = function() {
 			);
 			
 			// Disable the form while the search is running
+			$('#crawlFormSearch').val('Searching...');
 			$('#barSearchForm>fieldset').attr('disabled', true);		
+			
+			// Clear any existing results or message and show a loading indicator instead
+			$('#searchResults').html('<img src="img/loading.gif">');
 		}
 	);	
 };
@@ -376,14 +399,13 @@ var addEditPageEventListeners = function() {
 var showEditPage = function(id) {
 	currentCrawl = getDetails(id);
 	currentCrawlId = id;
-	isCrawlSaved = true;
 	searchResults = [];
 	
 	$('#body').html('');						// Clear the page of all content
 	$('#body').append(editPageStructure());		// Add the basic structure of the main page
 	populateEditPageHeader();					// Fill out the form on the top of the edit page
 	refreshCrawlOnEditPage();					// Add the crawls
-	$('#crawlFormSave').attr("disabled", true); // Crawl is currently saved, so save is disbled
+	updateSaveStatus(true);
 	addEditPageEventListeners();				// Add the button handlers
 	
 	if (currentCrawl.barIds.length == 0) {

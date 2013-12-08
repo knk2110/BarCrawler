@@ -3,6 +3,31 @@ var clientID = "MSEKJ0U1BBTLQB4SKB0W0Y0YBS4SQ2D3TXLDJGXLM5QPPSMP";
 var clientSecret = "P1ZIH1NK2SOG3G2QPJFTAEBJ2CKJD3TS3DHJAKMFTTUKHTIG";
 var auth = "client_id="+clientID+"&client_secret="+clientSecret;
  
+ //a list of ids for bars and its subcategory from the foursquare api. Used to get the category name of the filtered venues to display to the users
+var barCategory=
+[
+  "4d4b7105d754a06376d81259",
+  "4bf58dd8d48988d116941735",
+  "50327c8591d4c4b30a586d5d",
+  "4bf58dd8d48988d11e941735",
+  "4bf58dd8d48988d118941735",
+  "4bf58dd8d48988d1d8941735",
+  "4bf58dd8d48988d119941735",
+  "4bf58dd8d48988d1d5941735",
+  "4bf58dd8d48988d120941735",
+  "4bf58dd8d48988d121941735",
+  "4bf58dd8d48988d11f941735",
+  "4bf58dd8d48988d11a941735",
+  "4bf58dd8d48988d11b941735",
+  "4bf58dd8d48988d11c941735",
+  "4bf58dd8d48988d1d4941735",
+  "4bf58dd8d48988d11d941735",
+  "4bf58dd8d48988d1d6941735",
+  "4bf58dd8d48988d122941735",
+  "4bf58dd8d48988d123941735"
+];
+
+
 //This date string will be passed to search api url  
 function getDateString()
 {  
@@ -80,12 +105,10 @@ function search_venue(inputs,callback){
   var categoryId = inputs.categoryId;
   var rating = inputs.rating;
   var price = inputs.price;
-
   var venue_details=[];
   var venues=[];
   var url;
 
-  console.log(place);
 //when searching the venues, search only the ones within radius of 1000 meters
   if(typeof categoryId !="undefined")
   {
@@ -114,12 +137,13 @@ function search_venue(inputs,callback){
           venue_details = results;
           console.log(venue_details);
           var filtered_list;
-          if(typeof price !="undefined" ||typeof rating !="undefined"){
-             filtered_list = venue_with_price_and_rating(venue_details,price,rating);
+          if(rating=="" && price =="")
+          {
+            filtered_list = parse_venue_object(venue_details);
           }
           else
           {
-             filtered_list = parse_venue_object(venue_details);
+            filtered_list = venue_with_price_and_rating(venue_details,price,rating);
           }
           callback(filtered_list);
       });
@@ -170,27 +194,55 @@ function venue_with_price_and_rating(venues,price,rating)
     venue_price = venues[i]['price'];
     venue_rating = venues[i]['rating']; //might be undefined
 
-    if(typeof venue_price != "undefined")
+    //check if user specified a price
+    if(typeof price!="undefined")
     {
-      venue_price = venues[i]['price']['tier'];
-      if (venue_price == price)
+      //case if the user only defines rating but no price
+      if(typeof rating =="undefined")
       {
-        if(venue_rating >=rating)
+          if(typeof venue_price != "undefined")
+          {
+            venue_price = venues[i]['price']['tier'];
+            if (venue_price == price)
+            {
+              filtered_list.push(venues[i]);
+            }
+          }
+      }
+      //case when the user specifed both price and rating
+      else
+      {
+        if(typeof venue_price != "undefined")
         {
-          filtered_list.push(venues[i]);
+          venue_price = venues[i]['price']['tier'];
+          if (venue_price == price)
+          {
+            if(venue_rating >=rating)
+            {
+              filtered_list.push(venues[i]);
+            }
+         
+          }
         }
-     
+        else
+        {
+          if(venue_rating >=rating)
+            {
+              filtered_list.push(venues[i]);
+            }
+        }
       }
     }
+    //if user doesn't specify, just filters the venues through rating
     else
     {
       if(venue_rating >=rating)
-        {
-          filtered_list.push(venues[i]);
-        }
+          {
+            filtered_list.push(venues[i]);
+          }
     }
   }
-  
+  console.log(filtered_list);
   final_list = parse_venue_object(filtered_list);
   return final_list;
 };
@@ -206,7 +258,6 @@ function parse_venue_object(venues)
   {
     var venue_id = venues[i]['id'];
     var venue_name = venues[i]['name'];
-    console.log(i,venue_name);
 
     //not all vendors have prices information included, but the data object always a tag of price
     var venue_price = venues[i]['price'];
@@ -219,19 +270,27 @@ function parse_venue_object(venues)
     var venue_rating = venues[i]['rating'];
     venue_url = venues[i]['url'];
 
-    //some vendors don't have a specifed category
-   
-    var venue_category = venues[i]['categories'][0];
-    if(typeof venue_category !="undefined")
-    {
-
-      venue_category = venues[i]['categories'][0].name;
-    } 
-    else
-    {
-      venue_category = "Unknown";
-
-    }
+    //some vendors don't have a specifed category and some have more than one category
+    //find the first category that matches one of the ids within the bar sub-category
+    var venue_categoryName;
+    var venue_category = venues[i]['categories'];
+    
+      for (var j=0;j<venue_category.length;j++)
+      {
+        if(typeof venue_category[j]!="undefined")
+        {
+          var categoryId = venue_category[j].id;
+          if(barCategory.indexOf(categoryId)!=-1)
+          {
+            venue_categoryName = venue_category[j].name;
+          }
+        }
+      }
+      if(typeof venue_categoryName == "undefined")
+      {
+        venue_categoryName = "Unknown";
+      }
+    
     var venue_location = venues[i]['location'];
 
     var venue_info=
@@ -240,7 +299,7 @@ function parse_venue_object(venues)
       name:venue_name,
       price:venue_price,
       rating:venue_rating,
-      category:venue_category,
+      category:venue_categoryName,
       location:venue_location,
       url:venue_url
     };
