@@ -36,7 +36,7 @@ function saveData(data, type, key){
 		// create id for bar crawl
 		var time = new Date().getTime();
 		// create md5 of string
-		var keyString = time + Math.floor((Math.random()*999999999)+1);
+		var keyString = "id" + time + Math.floor((Math.random()*999999999)+1);
 		store.set(keyString, data);
 		// Add key to key array
 		var keyArray = store.get(type);
@@ -55,17 +55,15 @@ function saveData(data, type, key){
 // Returns true if successfully deleted object
 // Returns false if wrong key or no key given and couldn't remove object
 function deleteData(key, type){
-	console.log(store.get(key));
 	if(store.get(key)){
 		// delete key 
 		store.remove(key);
-		var keyArray = store.get(type);
+		
 		// Find and remove item from an array
-		var i = keyArray.indexOf(key);
-		console.log(i);
-		if(i != -1) {
-			keyArray.splice(i, 1);
-		}
+		var keyArray = store.get(type);
+		keyArray = _.without(keyArray, key);
+		store.set(type, keyArray);
+		
 		return true;
 	}
 	else{

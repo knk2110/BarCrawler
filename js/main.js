@@ -103,8 +103,6 @@ var addCrawlToMainPage = function(crawlId) {
 		var bar = getDetails(barId);
 		
 		bar.num = i+1;
-		console.log(barId,i+1);
-		console.log(bar);
 		$('#' + crawlId + '-crawl-panel-list').append(mainPageCrawlPanelBar(bar));
 		
 		if (i < barIds.length-1) {
@@ -174,8 +172,6 @@ var showMainPage = function() {
 	
 	// Obtain an array of ids of the crawls that exist
 	var crawlIds = getAllIDs('crawl');
-	console.log("crawls");
-	console.log(crawlIds);
 	
 	// If the crawls do not exist, show an instruction to the user.  Otherwise, add each crawl to the page
 	if (typeof crawlIds === 'undefined') {
@@ -333,4 +329,3 @@ var showEditPage = function(id) {
 
 /////////////////// APPLICATION START ///////////////////
 showMainPage();
-
