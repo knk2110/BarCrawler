@@ -90,7 +90,47 @@ var editPageCrawlPanelBar = _.template(templates.editPageCrawlPanelBar);
 var editPageCrawlPanelWalkTime = _.template(templates.editPageCrawlPanelWalkTime);
 var editPageCrawlPanelMap = _.template(templates.editPageCrawlPanelMap); 
 
+/////////////////// ALERTS ///////////////////
+var confirmDeleteCrawl = function(callbacks) {
+	bootbox.dialog({
+		message: "Are you sure you want to permanently delete this crawl?",
+		buttons: {
+			danger: {
+				label: "Delete Crawl",
+				className: "btn-danger",
+				callback: callbacks.onDelete
+			},
+			cancel: {
+				label: "Cancel",
+				className: "btn-primary",
+				callback: callbacks.onCancel
+			}
+		}
+	});	
+};
 
+var confirmIgnoreEdits = function(callbacks) {
+	bootbox.dialog({
+		message: "You've made unsaved changes to this crawl.  Would you like to save them?",
+		buttons: {
+			cancel: {
+				label: "Cancel",
+				className: "btn-default",
+				callback: callbacks.onCancel
+			},
+			danger: {
+				label: "Don't Save",
+				className: "btn-danger",
+				callback: callbacks.onIgnore
+			},
+			save: {
+				label: "Save",
+				className: "btn-primary",
+				callback: callbacks.onSave
+			}
+		}
+	});	
+};
 
 /////////////////// MAIN PAGE ///////////////////
 // Given a crawl object, adds it to the list shown on the main page
@@ -159,7 +199,7 @@ var addMainPageEventListeners = function() {
 	$('.copyCrawl').on('click', function(event) { console.log("COPY " + getId(event.target)); });
 	$('.emailCrawl').on('click', function(event) { console.log("EMAIL " + getId(event.target)); });
 	$('.printCrawl').on('click', function(event) { console.log("PRINT " + getId(event.target)); });
-	$('.deleteCrawl').on('click', function(event) { deleteData(getId(event.target), 'crawl'); showMainPage(); });	
+	$('.deleteCrawl').on('click', function(event) { confirmDeleteCrawl({onDelete: function() { deleteData(getId(event.target), 'crawl'); showMainPage(); }}); });	
 };
 
 // Shows the main page
@@ -272,13 +312,33 @@ var refreshSearchResultsOnEditPage = function() {
 	$('.barInfo').on('click', function(event) { console.log("Info ", getId(event.target)); });	
 };
 
+// Saves the current crawl
+var saveCurrentCrawl = function() {
+	currentCrawl.updateDate = reformatDate("today", "", dateFormats.store);
+	saveData(currentCrawl, 'crawl', currentCrawlId);
+	$('#crawlFormSave').attr("disabled", true);
+	isCrawlSaved = true;	
+};
+
+
 // Adds event listeners used by buttons on the main page
 var addEditPageEventListeners = function() {
 	$('#crawlFormTitle').change(function(event) { currentCrawl.title = $('#crawlFormTitle').val(); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
 	$('#crawlFormDate').change(function(event) { currentCrawl.date = reformatDate($('#crawlFormDate').val(), dateFormats.form, dateFormats.store); $('#crawlFormSave').attr("disabled", false); isCrawlSaved = false; });
-	$('#crawlFormHome').on('click', function(event) { showMainPage(); });
-	$('#crawlFormSave').on('click', function(event) { currentCrawl.updateDate = reformatDate("today", "", dateFormats.store); saveData(currentCrawl, 'crawl', currentCrawlId); $('#crawlFormSave').attr("disabled", true); isCrawlSaved = false; });
-	$('#crawlFormDelete').on('click', function(event) { deleteData(currentCrawlId, 'crawl'); showMainPage(); });
+	$('#crawlFormHome').on('click',
+		function(event) {
+			if (isCrawlSaved) {
+				showMainPage(); 
+			} else {
+				confirmIgnoreEdits({
+					onSave: function() { saveCurrentCrawl(); showMainPage(); },
+					onIgnore: function() { showMainPage(); }, 
+				});   
+			} 
+		}
+	);
+	$('#crawlFormSave').on('click', function(event) { saveCurrentCrawl(); });
+	$('#crawlFormDelete').on('click', function(event) { confirmDeleteCrawl({onDelete: function() { deleteData(currentCrawlId, 'crawl'); showMainPage(); }}); });
 	
 	// When the barSearchForm is submitted, we must pull the data from the form, call the API, disable the form, show a loading indicator 
 	$('#barSearchForm').on('submit',
