@@ -164,61 +164,24 @@ function get_venue_details(venue,callback)
 function venue_with_price_and_rating(venues,price,rating)
 {
   filtered_list=[];
-  for (var i=0;i<venues.length;i++)
-  {
-
-    venue_price = venues[i]['price'];
-    venue_rating = venues[i]['rating']; //might be undefined
-
-    //check if user specified a price
-    if(typeof price!="undefined")
-    {
-      //case if the user only defines rating but no price
-      if(typeof rating =="undefined")
-      {
-          if(typeof venue_price != "undefined")
-          {
-            venue_price = venues[i]['price']['tier'];
-            if (venue_price == price)
-            {
-              filtered_list.push(venues[i]);
-            }
-          }
-      }
-      //case when the user specifed both price and rating
-      else
-      {
-        if(typeof venue_price != "undefined")
-        {
-          venue_price = venues[i]['price']['tier'];
-          if (venue_price == price)
-          {
-            if(venue_rating >=rating)
-            {
-              filtered_list.push(venues[i]);
-            }
-         
-          }
-        }
-        else
-        {
-          if(venue_rating >=rating)
-            {
-              filtered_list.push(venues[i]);
-            }
-        }
-      }
-    }
-    //if user doesn't specify, just filters the venues through rating
-    else
-    {
-      if(venue_rating >=rating)
-          {
-            filtered_list.push(venues[i]);
-          }
-    }
-  }
-  console.log(filtered_list);
+  
+  var isValid = function(param) {
+  	return typeof param!='undefined' && param!="";
+  }; 
+  
+  _.each(venues,
+  	function(venue,i,venues) {
+    	venue_price = venues[i]['price'];
+    	venue_rating = venues[i]['rating'];
+    	
+    	if ( (!isValid(price) || (isValid(price) && (!isValid(venue_price) || venue_price.tier == price)))
+    			&&
+    		 (!isValid(rating) || (isValid(rating) && (!isValid(venue_rating) || venue_rating >= rating))) ) {
+    			filtered_list.push(venues[i]);
+    	}		  		
+  	}
+  );
+  
   final_list = parse_venue_object(filtered_list);
   return final_list;
 };
