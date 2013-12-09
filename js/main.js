@@ -348,6 +348,9 @@ var refreshCrawlOnEditPage = function() {
 				if (typeof bar.location.postalCode != 'undefined') { $('#barSearchFormZip').val(bar.location.postalCode); }
 				if (typeof bar.price != 'undefined') { $('#barSearchFormPrice').val(bar.price); }
 				
+				// Set the sort to be by distance
+				lastSortType = 'distance';
+				
 				// Start the search
 				$('#barSearchForm').submit();			
 			}
