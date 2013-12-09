@@ -2,6 +2,7 @@
 /*
  * A crawl object is structured as follows:
  * crawl = {
+ * 	id: 'id1234',
  * 	title: 'title',
  *  date: '9-Dec-13' or empty string,
  *  updatedDate: '9-Dec-13' or empty string,
@@ -96,6 +97,18 @@ var dateFormats = {
 	store: "D-MMM-YY"		// Format used for display
 };
 
+// Given a string representation of a date d in format from, returns a string representation of d in format to
+// If d is empty, returns an empty string
+var reformatDate = function(d, from, to) {
+	if (d == "") { 
+		return "";
+	} else if (d == "today") {
+		return moment().format(to);
+	} else {
+		return moment(d, from).format(to);
+	}
+};
+
 
 /////////////////// VARIABLES ///////////////////
 var currentCrawl;		// object for the crawl currently being edited on the edit screen
@@ -180,7 +193,6 @@ var addCrawlToMainPage = function(crawlId) {
 	
 	// For each bar id in the crawl, add its lat and lng to an array of locations in order to build the map URL _.each(crawl.barIds, function(barId, i) { var bar = getDetails(barId); locations[i] = { lat: bar.location.lat, lng: bar.location.lng }; } );
 	if ( crawl.barIds.length == 0 ) {
-		console.log(crawl.zip);
 		crawl.mapURL = buildMapURL({height:300, width:300, zipcode:crawl.zip});
 	} else {
 		var locations = [];
@@ -236,8 +248,8 @@ var addMainPageEventListeners = function() {
 	
 	$('.editCrawl').on('click', function(event) { showEditPage(getId(event.target)); });
 	$('.copyCrawl').on('click', function(event) { var id = copyData(getId(event.target), 'crawl'); var crawl = getDetails(id); crawl.id = id; crawl.title = crawl.title + ' (copy)'; saveData(crawl, 'crawl', id); showMainPage(); });
-	$('.emailCrawl').on('click', function(event) { console.log("EMAIL " + getId(event.target)); });
-	$('.printCrawl').on('click', function(event) { console.log("PRINT " + getId(event.target)); });
+	//$('.emailCrawl').on('click', function(event) { console.log("EMAIL " + getId(event.target)); });
+	//$('.printCrawl').on('click', function(event) { console.log("PRINT " + getId(event.target)); });
 	$('.deleteCrawl').on('click', function(event) { confirmDeleteCrawl({onDelete: function() { deleteData(getId(event.target), 'crawl'); showMainPage(); }}); });	
 };
 
@@ -248,6 +260,9 @@ var showMainPage = function() {
 	
 	// Obtain an array of ids of the crawls that exist
 	var crawlIds = getAllIDs('crawl');
+	
+	// Sort the array by date
+	crawlIds = _.sortBy(crawlIds, function(crawlId) { return reformatDate(getDetails(crawlId).date, dateFormats.store, dateFormats.sort); } );
 	
 	// If the crawls do not exist, show an instruction to the user.  Otherwise, add each crawl to the page
 	if (typeof crawlIds === 'undefined' || crawlIds.length == 0) {

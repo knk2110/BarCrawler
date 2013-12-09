@@ -1,16 +1,4 @@
 // Miscellaneous utility functions
-// Given a string representation of a date d in format from, returns a string representation of d in format to
-// If d is empty, returns an empty string
-var reformatDate = function(d, from, to) {
-	if (d == "") { 
-		return "";
-	} else if (d == "today") {
-		return moment().format(to);
-	} else {
-		return moment(d, from).format(to);
-	}
-};
-
 // Returns string s repeated n number of times
 var rept = function(s, n) {
 	var result = "";
