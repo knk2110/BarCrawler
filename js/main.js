@@ -131,7 +131,7 @@ var confirmDeleteCrawl = function(callbacks) {
 			},
 			cancel: {
 				label: "Cancel",
-				className: "btn-primary",
+				className: "btn-default",
 				callback: callbacks.onCancel
 			}
 		}
@@ -142,20 +142,20 @@ var confirmIgnoreEdits = function(callbacks) {
 	bootbox.dialog({
 		message: "You've made unsaved changes to this crawl.  Would you like to save them?",
 		buttons: {
-			cancel: {
-				label: "Cancel",
-				className: "btn-default",
-				callback: callbacks.onCancel
+			save: {
+				label: "Save",
+				className: "btn-primary",
+				callback: callbacks.onSave
 			},
 			danger: {
 				label: "Don't Save",
 				className: "btn-danger",
 				callback: callbacks.onIgnore
 			},
-			save: {
-				label: "Save",
-				className: "btn-primary",
-				callback: callbacks.onSave
+			cancel: {
+				label: "Cancel",
+				className: "btn-default",
+				callback: callbacks.onCancel
 			}
 		}
 	});	
@@ -251,7 +251,7 @@ var showMainPage = function() {
 	
 	// If the crawls do not exist, show an instruction to the user.  Otherwise, add each crawl to the page
 	if (typeof crawlIds === 'undefined' || crawlIds.length == 0) {
-		$('#pageContent').append("<P>You don't have any bar crawls yet.  Type <strong>Add New Crawl</strong> to create one.</P>");
+		$('#pageContent').append("<P>You don't have any bar crawls yet.  Click <strong>Create New Crawl</strong> to create one.</P>");
 	} else {
 		_.each(crawlIds, addCrawlToMainPage);				// Add the crawls
 	};
@@ -285,7 +285,7 @@ var refreshCrawlOnEditPage = function() {
 	// If the current crawl does not have any bars, show an instruction message and add a map with the current zip code
 	// Otherwise, add the bars to the bars panel	
 	if ( currentCrawl.barIds.length == 0 ) {
-		$('#barsList').html("<div class=\"well\">You haven't added any bars to this crawl yet.  Use the search form on the left and click <strong>Add</strong> to add a bar.</div>");
+		$('#barsList').html("<div class=\"well\">The bars on your crawl will appear here.  Use the search form on the left and click <strong>Add</strong> to add a bar.</div>");
 		$('#crawlMap').html(editPageCrawlPanelMap({mapURL: buildMapURL({height:300, width:300, zipcode:currentCrawl.zip})}));	
 	} else {
 		// Clear the area
@@ -449,6 +449,7 @@ var addEditPageEventListeners = function() {
 					// Re-enable the form
 					$('#crawlFormSearch').val('Search');
 					$('#barSearchForm>fieldset').attr('disabled', false);
+					$('#findNearbyBar').attr('disabled', false);
 					
 					// Store the search results
 					searchResults = [];
@@ -464,7 +465,8 @@ var addEditPageEventListeners = function() {
 			
 			// Disable the form while the search is running
 			$('#crawlFormSearch').val('Searching...');
-			$('#barSearchForm>fieldset').attr('disabled', true);		
+			$('#barSearchForm>fieldset').attr('disabled', true);
+			$('#findNearbyBar').attr('disabled', true);		
 			
 			// Clear any existing results or message and show a loading indicator instead
 			$('#searchResults').html('<img src="img/loading.gif">');

@@ -2,7 +2,7 @@
 // var geocoder = new google.maps.Geocoder();
 var ZIP_ZOOM = 15;
 var PATH_WEIGHT = 3;
-var PATH_COLOR = "blue";
+var PATH_COLOR = "red";
 
 // var API_KEY = "AIzaSyCLmg3Ze8aC4aeiBlb3r-kSoII9GLxrcUo";
 
@@ -47,7 +47,7 @@ function buildMapURL(locator){
     var pointsString = '';
     // put markers on map
       for(var i=0; i<locator.locations.length ; i++){
-        urlString += "&markers=color:blue%7Clabel:" + (i+1) + "%7C" + locator.locations[i].lat +"," + locator.locations[i].lng;
+        urlString += "&markers=color:orange%7Clabel:" + (i+1) + "%7C" + locator.locations[i].lat +"," + locator.locations[i].lng;
       }
       // if more than one marker - draw path on map
     if(locator.locations.length > 1){
