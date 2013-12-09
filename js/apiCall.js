@@ -2,30 +2,6 @@
 var clientID = "MSEKJ0U1BBTLQB4SKB0W0Y0YBS4SQ2D3TXLDJGXLM5QPPSMP";
 var clientSecret = "P1ZIH1NK2SOG3G2QPJFTAEBJ2CKJD3TS3DHJAKMFTTUKHTIG";
 var auth = "client_id="+clientID+"&client_secret="+clientSecret;
- 
- //a list of ids for bars and its subcategory from the foursquare api. Used to get the category name of the filtered venues to display to the users
-var barCategory=
-[
-  "4d4b7105d754a06376d81259",
-  "4bf58dd8d48988d116941735",
-  "50327c8591d4c4b30a586d5d",
-  "4bf58dd8d48988d11e941735",
-  "4bf58dd8d48988d118941735",
-  "4bf58dd8d48988d1d8941735",
-  "4bf58dd8d48988d119941735",
-  "4bf58dd8d48988d1d5941735",
-  "4bf58dd8d48988d120941735",
-  "4bf58dd8d48988d121941735",
-  "4bf58dd8d48988d11f941735",
-  "4bf58dd8d48988d11a941735",
-  "4bf58dd8d48988d11b941735",
-  "4bf58dd8d48988d11c941735",
-  "4bf58dd8d48988d1d4941735",
-  "4bf58dd8d48988d11d941735",
-  "4bf58dd8d48988d1d6941735",
-  "4bf58dd8d48988d122941735",
-  "4bf58dd8d48988d123941735"
-];
 
 
 //This date string will be passed to search api url  
@@ -286,7 +262,7 @@ function parse_venue_object(venues)
         if(typeof venue_category[j]!="undefined")
         {
           var categoryId = venue_category[j].id;
-          if(barCategory.indexOf(categoryId)!=-1)
+          if(_.values(categories).indexOf(categoryId)!=-1)
           {
             venue_categoryName = venue_category[j].name;
           }

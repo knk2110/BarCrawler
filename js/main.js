@@ -64,6 +64,30 @@ var walkingTime = function(bar1, bar2) {
 	return Math.round(calcWalkingTime(bar1.location.lat, bar1.location.lng, bar2.location.lat, bar2.location.lng));
 };
 
+/////////////////// CATEGORIES ///////////////////
+// A list of the foursquare bar categories and their ids
+var categories =
+{
+	"Bar": "4bf58dd8d48988d116941735",
+	"Beer Garden": "4bf58dd8d48988d117941735",	
+	"Brewery": "50327c8591d4c4b30a586d5d",
+	"Cocktail Bar": "4bf58dd8d48988d11e941735",
+	"Dive Bar": "4bf58dd8d48988d118941735",
+	"Gay Bar": "4bf58dd8d48988d1d8941735",
+	"Hookah Bar": "4bf58dd8d48988d119941735",
+	"Hotel Bar": "4bf58dd8d48988d1d5941735",
+	"Karaoke Bar": "4bf58dd8d48988d120941735",
+	"Lounge": "4bf58dd8d48988d121941735",
+	"Nightclub": "4bf58dd8d48988d11f941735",
+	"Pub": "4bf58dd8d48988d11b941735",
+	"Sake Bar": "4bf58dd8d48988d11c941735",
+	"Speakeasy": "4bf58dd8d48988d1d4941735",
+	"Sports Bar": "4bf58dd8d48988d11d941735",
+	"Strip Club": "4bf58dd8d48988d1d6941735",
+	"Whiskey Bar": "4bf58dd8d48988d122941735",
+	"Wine Bar": "4bf58dd8d48988d123941735",
+	"Other": "4bf58dd8d48988d11a941735",	
+};
 
 /////////////////// DATE FORMATS ///////////////////
 var dateFormats = {
@@ -248,11 +272,11 @@ var updateSaveStatus = function(status) {
 	isCrawlSaved = status;
 	
 	if (isCrawlSaved) {
-		$('#crawlFormSave').html('<span class="glyphicon glyphicon-floppy-disk"></span> Saved');
-		$('#crawlFormSave').attr('disabled', true);	
+		$('.saveCrawl').html('<span class="glyphicon glyphicon-floppy-disk"></span> Saved');
+		$('.saveCrawl').attr('disabled', true);	
 	} else {
-		$('#crawlFormSave').html('<span class="glyphicon glyphicon-floppy-disk"></span> Save');
-		$('#crawlFormSave').attr('disabled', false);
+		$('.saveCrawl').html('<span class="glyphicon glyphicon-floppy-disk"></span> Save');
+		$('.saveCrawl').attr('disabled', false);
 	};	
 };
 
@@ -286,6 +310,9 @@ var refreshCrawlOnEditPage = function() {
 		// Insert each bar into the panel
 		_.each(currentCrawl.barIds, insertBar);
 		
+		// Insert a button to add additional bars near the last bar
+		$('#barsList').append('<button type="button" class="btn btn-primary" id="findNearbyBars">Find another bar nearby</button>');
+				
 		// We have a listener for each class of buttons on the panel for each bar
 		// If the button is pressed, event.target.name contains the bar id.  However, if the icon is pressed, we need to go to the parent, the button, to get the name
 		var getId = function(target) {
@@ -295,7 +322,21 @@ var refreshCrawlOnEditPage = function() {
 		// Add listeners for the buttons
 		$('.barUp').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), -1); refreshCrawlOnEditPage(); updateSaveStatus(false); });
 		$('.barDown').on('click', function(event) { moveBarOnCrawl(currentCrawl, getId(event.target), 1); refreshCrawlOnEditPage(); updateSaveStatus(false); });
-		$('.barDelete').on('click', function(event) { deleteBarFromCrawl(currentCrawl, getId(event.target)); searchResults.push(getId(event.target)); refreshCrawlOnEditPage(); refreshSearchResultsOnEditPage(); updateSaveStatus(false); });	
+		$('.barDelete').on('click', function(event) { deleteBarFromCrawl(currentCrawl, getId(event.target)); searchResults.push(getId(event.target)); refreshCrawlOnEditPage(); refreshSearchResultsOnEditPage(); updateSaveStatus(false); });
+		
+		$('#findNearbyBars').on('click',
+			function(event) {
+				// Copy key info from the last bar on the crawl to the search form and submit it
+				var bar = getDetails(_.last(currentCrawl.barIds));
+				
+				if (typeof bar.category != 'undefined') { $('#barSearchFormType').val(categories[bar.category]); }
+				if (typeof bar.location.postalCode != 'undefined') { $('#barSearchFormZip').val(bar.location.postalCode); }
+				if (typeof bar.price != 'undefined') { $('#barSearchFormPrice').val(bar.price); }
+				
+				// Start the search
+				$('#barSearchForm').submit();			
+			}
+		);	
 	}
 };
 
@@ -323,7 +364,7 @@ var refreshSearchResultsOnEditPage = function() {
 		} else if (lastSortType == "ratingDesc") {
 			sortParams.rating = -1;
 		} else if (lastSortType == "distance") {
-			sortParams.distance = currentCrawl.barIds[currentCrawl.barIds.length-1];
+			sortParams.distance = _.last(currentCrawl.barIds);
 		}
 		
 		searchResults = sortIDs(searchResults, sortParams);
@@ -335,7 +376,7 @@ var refreshSearchResultsOnEditPage = function() {
 				// If there is already a bar on the crawl, include distance information to be shown in the search panel
 				if (currentCrawl.barIds.length > 0) {
 					bar.distanceInfo = {
-						minutes: walkingTime(bar, getDetails(currentCrawl.barIds[currentCrawl.barIds.length-1])),
+						minutes: walkingTime(bar, getDetails(_.last(currentCrawl.barIds))),
 						num: currentCrawl.barIds.length
 					};
 				}
@@ -378,7 +419,7 @@ var addEditPageEventListeners = function() {
 	$('#crawlForm').submit(function(event) { event.preventDefault(); });
 	$('#crawlFormTitle').change(function(event) { currentCrawl.title = $('#crawlFormTitle').val(); updateSaveStatus(false); });
 	$('#crawlFormDate').change(function(event) { currentCrawl.date = reformatDate($('#crawlFormDate').val(), dateFormats.form, dateFormats.store); updateSaveStatus(false); });
-	$('#crawlFormHome').on('click',
+	$('#home').on('click',
 		function(event) {
 			if (isCrawlSaved) {
 				showMainPage(); 
@@ -390,7 +431,7 @@ var addEditPageEventListeners = function() {
 			} 
 		}
 	);
-	$('#crawlFormSave').on('click', function(event) { saveCurrentCrawl(); });
+	$('.saveCrawl').on('click', function(event) { saveCurrentCrawl(); });
 	$('#crawlFormDelete').on('click', function(event) { confirmDeleteCrawl({onDelete: function() { deleteData(currentCrawlId, 'crawl'); showMainPage(); }}); });
 	
 	// When the barSearchForm is submitted, we must pull the data from the form, call the API, disable the form, show a loading indicator 
