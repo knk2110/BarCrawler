@@ -154,15 +154,25 @@ var addCrawlToMainPage = function(crawlId) {
 		}
 	};
 	
-	// For each bar id in the crawl, add its lat and lng to an array of locations in order to build the map URL 
-	var locations = [];
-	_.each(crawl.barIds, function(barId, i) { var bar = getDetails(barId); locations[i] = { lat: bar.location.lat, lng: bar.location.lng }; } );
-	crawl.mapURL = buildMapURL({height:300, width:300, locations:locations});
+	// For each bar id in the crawl, add its lat and lng to an array of locations in order to build the map URL _.each(crawl.barIds, function(barId, i) { var bar = getDetails(barId); locations[i] = { lat: bar.location.lat, lng: bar.location.lng }; } );
+	if ( crawl.barIds.length == 0 ) {
+		console.log(crawl.zip);
+		crawl.mapURL = buildMapURL({height:300, width:300, zipcode:crawl.zip});
+	} else {
+		var locations = [];
+		_.each(crawl.barIds, function(barId, i) { var bar = getDetails(barId); locations[i] = { lat: bar.location.lat, lng: bar.location.lng }; } );
+		crawl.mapURL = buildMapURL({height:300, width:300, locations:locations});
+	}
 	
 	// Set up the panel holding the crawl, including the map.  Then for each bar, insert it
 	crawl.id = crawlId;
 	$('#pageContent').append(mainPageCrawlPanel(crawl));
-	_.each(crawl.barIds, insertBar);
+	
+	if ( crawl.barIds.length == 0 ) {
+		$('#' + crawlId + '-crawl-panel-list').append('<div class="well">You haven\'t added any bars to this crawl yet.  Click <strong>Edit</strong> to add bars to the crawl.</div>');
+	} else {
+		_.each(crawl.barIds, insertBar);
+	}
 }; 
 
 // Adds event listeners used by buttons on the main page
@@ -217,7 +227,7 @@ var showMainPage = function() {
 	
 	// If the crawls do not exist, show an instruction to the user.  Otherwise, add each crawl to the page
 	if (typeof crawlIds === 'undefined' || crawlIds.length == 0) {
-		$('#pageContent').append("<P>You don't have any bar crawls yet.  Type <strong>Add New Crawl</strong> to create one.");
+		$('#pageContent').append("<P>You don't have any bar crawls yet.  Type <strong>Add New Crawl</strong> to create one.</P>");
 	} else {
 		_.each(crawlIds, addCrawlToMainPage);				// Add the crawls
 	};
@@ -251,7 +261,7 @@ var refreshCrawlOnEditPage = function() {
 	// If the current crawl does not have any bars, show an instruction message and add a map with the current zip code
 	// Otherwise, add the bars to the bars panel	
 	if ( currentCrawl.barIds.length == 0 ) {
-		$('#barsList').html("<div class=\"well\">You haven't added any bars to this crawl yet.  Use the search form on the left to find bars you'd like to add.</div>");
+		$('#barsList').html("<div class=\"well\">You haven't added any bars to this crawl yet.  Use the search form on the left and click <strong>Add</strong> to add a bar.</div>");
 		$('#crawlMap').html(editPageCrawlPanelMap({mapURL: buildMapURL({height:300, width:300, zipcode:currentCrawl.zip})}));	
 	} else {
 		// Clear the area
@@ -295,6 +305,8 @@ var refreshSearchResultsOnEditPage = function() {
 	
 	// Add each bar in the search results to the panel or show a message indicating there are no results
 	if (searchResults.length > 0) {
+		if ( currentCrawl.barIds.length == 0 && lastSortType == 'distance' ) { lastSortType = 'ratingDesc'; }
+		
 		$('#searchResults').append(editPageSearchSort({num: currentCrawl.barIds.length}));
 		$('#barSearchFormSort').val(lastSortType);
 		$('#barSearchFormSort').change(function() { lastSortType = $('#barSearchFormSort').val(); refreshSearchResultsOnEditPage(); });

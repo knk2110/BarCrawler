@@ -71,9 +71,6 @@ function sortIDs(IDs, searchBy){
 	else if(searchBy.distance){
 		IDs.sort(function(a,b) { return walkingTime(getDetails(a), getDetails(searchBy.distance)) - walkingTime(getDetails(b), getDetails(searchBy.distance)); });
 	}
-	else{
-		alert("wrong search criteria!");
-	}
 
 	return IDs;
 }
