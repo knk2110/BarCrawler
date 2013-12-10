@@ -403,7 +403,7 @@ var refreshSearchResultsOnEditPage = function() {
 			}
 		);
 	} else {
-		$('#searchResults').append('<P>No bars matched your search.  Please try another search.</P>');
+		$('#searchResults').append('<h4><label class="label label-warning">No bars matched your search.  Please try another search.</span></h4>');
 	};
 	
 	// We have a listener for each class of buttons on the search results for each bar
