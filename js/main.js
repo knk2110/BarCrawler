@@ -467,7 +467,7 @@ var addEditPageEventListeners = function() {
 					// Re-enable the form
 					$('#crawlFormSearch').val('Search');
 					$('#barSearchForm>fieldset').attr('disabled', false);
-					$('#findNearbyBar').attr('disabled', false);
+					$('#findNearbyBars').attr('disabled', false);
 					
 					// Store the search results
 					searchResults = [];
@@ -484,7 +484,7 @@ var addEditPageEventListeners = function() {
 			// Disable the form while the search is running
 			$('#crawlFormSearch').val('Searching...');
 			$('#barSearchForm>fieldset').attr('disabled', true);
-			$('#findNearbyBar').attr('disabled', true);		
+			$('#findNearbyBars').attr('disabled', true);		
 			
 			// Clear any existing results or message and show a loading indicator instead
 			$('#searchResults').html('<img src="img/loading.gif">');
