@@ -96,7 +96,7 @@ function search_venue(inputs,callback){
      url = config.apiUrl + 'v2/venues/search?'+query+'&radius=1000&'+auth+'&v='+getDateString();
   }
  
-  console.log(url);
+  //console.log(url);
   $.getJSON(url,
     function(data) {
       venues = data['response']['venues'];
@@ -111,7 +111,7 @@ function search_venue(inputs,callback){
       async.parallel(p_venue,function(err,results)
       {
           venue_details = results;
-          console.log(venue_details);
+          //console.log(venue_details);
           var filtered_list;
           if(rating=="" && price =="")
           {
@@ -125,10 +125,10 @@ function search_venue(inputs,callback){
       });
     })
     .done(function() {
-    console.log( "success" );
+    //console.log( "success" );
   })
   .fail(function() {
-    console.log( "error" );
+    //console.log( "error" );
     empty =[];
     callback(empty);
   });
